@@ -20,10 +20,10 @@
 
 ### 0.1 Repository & Tooling
 
-- [ ] Initialize the project with **Vite + React + TypeScript** (`npx create-vite`)
-- [ ] Configure **ESLint**, **Prettier**, and **TypeScript** `tsconfig.json`
-- [ ] Set up **Git** repo with `.gitignore`, branch strategy (`main`, `develop`, `feature/*`)
-- [ ] Install core dependencies:
+- [x] Initialize the project with **Vite + React + TypeScript** (`npx create-vite`)
+- [x] Configure **ESLint**, **Prettier**, and **TypeScript** `tsconfig.json`
+- [x] Set up **Git** repo with `.gitignore`, branch strategy (`main`, `develop`, `feature/*`)
+- [x] Install core dependencies:
   - `react`, `react-dom`, `react-router-dom`
   - `maplibre-gl`, `deck.gl`, `@deck.gl/mapbox`
   - `d3` (for micro-charts)
@@ -34,8 +34,8 @@
 
 ### 0.2 Design System Implementation
 
-- [ ] Configure **Google Fonts**: Inter / Space Grotesk (headings/body), JetBrains Mono (data labels)
-- [ ] Create **CSS design tokens** file (`tokens.css` or `variables.css`):
+- [x] Configure **Google Fonts**: Inter / Space Grotesk (headings/body), JetBrains Mono (data labels)
+- [x] Create **CSS design tokens** file (`index.css` with `:root` variables):
   - Backgrounds: `#000000`, `#0A0A0A`, `#121212`
   - Text: `#FFFFFF`, `#BBBBBB`, `#666666`
   - Signal colors: Red `#FF3B3B`, Green `#00FF85`, Yellow `#FFC857`, Blue `#2CA8FF`
