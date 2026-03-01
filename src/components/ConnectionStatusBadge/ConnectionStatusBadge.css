@@ -1,0 +1,93 @@
+/* =============================================
+   ConnectionStatusBadge Styles
+   ============================================= */
+
+.wo-conn-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: default;
+  background: none;
+  transition: all var(--transition-fast);
+}
+
+/* ---- Live ---- */
+.wo-conn-badge--live {
+  color: var(--signal-green);
+  border-color: rgba(0, 255, 133, 0.2);
+}
+
+.wo-conn-badge--live .wo-conn-badge__dot {
+  background: var(--signal-green);
+  box-shadow: 0 0 6px rgba(0, 255, 133, 0.5);
+  animation: conn-dot-pulse 2s ease-in-out infinite;
+}
+
+/* ---- Connecting ---- */
+.wo-conn-badge--connecting {
+  color: var(--signal-yellow);
+  border-color: rgba(255, 200, 87, 0.2);
+}
+
+.wo-conn-badge--connecting .wo-conn-badge__dot {
+  background: var(--signal-yellow);
+  animation: conn-dot-blink 1s step-end infinite;
+}
+
+/* ---- Offline ---- */
+.wo-conn-badge--offline {
+  color: var(--signal-red);
+  border-color: rgba(255, 59, 59, 0.2);
+  cursor: pointer;
+}
+
+.wo-conn-badge--offline:hover {
+  background: var(--signal-red-dim);
+  border-color: rgba(255, 59, 59, 0.4);
+}
+
+.wo-conn-badge--offline .wo-conn-badge__dot {
+  background: var(--signal-red);
+}
+
+/* ---- Polling ---- */
+.wo-conn-badge--polling {
+  color: var(--signal-blue);
+  border-color: rgba(44, 168, 255, 0.2);
+  cursor: pointer;
+}
+
+.wo-conn-badge--polling:hover {
+  background: var(--signal-blue-dim);
+  border-color: rgba(44, 168, 255, 0.4);
+}
+
+.wo-conn-badge--polling .wo-conn-badge__dot {
+  background: var(--signal-blue);
+  animation: conn-dot-blink 2s step-end infinite;
+}
+
+/* ---- Dot ---- */
+.wo-conn-badge__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+@keyframes conn-dot-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+@keyframes conn-dot-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0.2; }
+}

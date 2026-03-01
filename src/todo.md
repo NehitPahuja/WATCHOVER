@@ -202,16 +202,16 @@
 
 ### 3.1 Realtime Relay Server
 
-- [ ] Deploy **stateful WebSocket relay** (Fly.io or Railway)
-- [ ] Implement WebSocket channels:
+- [x] Deploy **stateful WebSocket relay** (Fly.io or Railway) — server/relay/server.ts ready
+- [x] Implement WebSocket channels:
   - `global` (headline counters)
   - `region:{code}`
   - `prediction:{id}`
   - `layer:{layer_id}`
-- [ ] Define **message envelope** format: `{ type, ts, payload }`
-- [ ] Implement event types: `events:new`, `events:update`, `predictions:update`, `counters:update`
-- [ ] Implement **security**: JWT auth for client WS, shared secret for server-to-relay
-- [ ] Build **graceful degradation**: WS down → polling fallback
+- [x] Define **message envelope** format: `{ type, ts, payload }` — server/relay/protocol.ts
+- [x] Implement event types: `events:new`, `events:update`, `predictions:update`, `counters:update`
+- [x] Implement **security**: JWT auth for client WS, shared secret for server-to-relay
+- [x] Build **graceful degradation**: WS down → polling fallback — useRealtime hook
 
 ### 3.2 Ingestion Workers
 
