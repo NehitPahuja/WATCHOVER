@@ -1,0 +1,176 @@
+/* =============================================
+   InteractiveGlobe Styles
+   ============================================= */
+
+.wo-globe-container {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: #050505; /* Deep dark base */
+  overflow: hidden;
+}
+
+/* Make sure deck.gl canvas takes full space */
+.wo-globe-container canvas {
+  outline: none;
+}
+
+/* Inner vignette for that command center feel */
+.wo-globe-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at center,
+    transparent 40%,
+    rgba(10, 10, 10, 0.4) 70%,
+    rgba(10, 10, 10, 0.9) 100%
+  );
+  z-index: 1; /* Below deck.gl UI but above base map */
+}
+
+
+/* =============================================
+   Hover Tooltip
+   ============================================= */
+
+.wo-globe-tooltip {
+  position: absolute;
+  z-index: 10;
+  pointer-events: none;
+  background: rgba(15, 15, 15, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  width: 260px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  transform: translate(0, 0); /* will be positioned via inline style */
+}
+
+.wo-globe-tooltip__header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.wo-globe-tooltip__flag {
+  font-size: 14px;
+}
+
+.wo-globe-tooltip__country {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.wo-globe-tooltip__title {
+  font-family: var(--font-primary);
+  font-size: var(--text-small);
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.4;
+  margin: 0 0 var(--spacing-sm);
+}
+
+.wo-globe-tooltip__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: var(--spacing-sm);
+}
+
+.wo-globe-tooltip__sentiment {
+  font-size: 9px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+
+/* =============================================
+   Loading Overlay
+   ============================================= */
+
+.wo-globe-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  background: rgba(10, 10, 10, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  color: var(--signal-blue);
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.wo-globe-spinner {
+  width: 40px;
+  height: 40px;
+  border: 2px solid rgba(44, 168, 255, 0.2);
+  border-top-color: var(--signal-blue);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* =============================================
+   Aircraft Counter Overlay
+   ============================================= */
+
+.wo-aircraft-counter {
+  position: absolute;
+  bottom: var(--spacing-lg);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  background: rgba(10, 10, 10, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(44, 168, 255, 0.3);
+  border-radius: var(--radius-full);
+  padding: 6px 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(44, 168, 255, 0.1);
+  z-index: 5;
+}
+
+.wo-aircraft-counter__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--signal-blue);
+  box-shadow: 0 0 8px var(--signal-blue);
+  animation: badge-dot-pulse 2s ease-in-out infinite;
+}
+
+.wo-aircraft-counter__count {
+  color: var(--signal-blue);
+  font-size: var(--text-small);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.wo-aircraft-counter__label {
+  font-family: var(--font-mono);
+  font-size: var(--text-micro);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}

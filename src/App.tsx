@@ -1,4 +1,4 @@
-import { DashboardLayout, Navbar, NewsTicker, Badge, PulseFeed } from './components'
+import { DashboardLayout, Navbar, NewsTicker, Badge, PulseFeed, InteractiveGlobe } from './components'
 import type { TickerItem } from './components'
 import type { WatchEvent } from './types'
 import './App.css'
@@ -247,14 +247,7 @@ function CenterPanel() {
   return (
     <div className="panel-center">
       <div className="globe-placeholder">
-        <div className="globe-placeholder__ring" />
-        <div className="globe-placeholder__ring globe-placeholder__ring--2" />
-        <div className="globe-placeholder__ring globe-placeholder__ring--3" />
-        <div className="globe-placeholder__label">
-          <span className="globe-placeholder__icon">🌍</span>
-          <span className="globe-placeholder__text">Globe Visualization</span>
-          <span className="globe-placeholder__sub text-muted">MapLibre GL + deck.gl — Phase 1.4</span>
-        </div>
+        <InteractiveGlobe events={MOCK_EVENTS} showHeatmap={false} />
       </div>
 
       <div className="tension-bar">
