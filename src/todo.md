@@ -67,22 +67,22 @@
 
 ### 1.1 Global Layout Shell
 
-- [ ] Build the **3-panel layout** grid:
+- [x] Build the **3-panel layout** grid:
   - Left Panel: 22–25%
   - Center Globe: 45–50%
   - Right Panel: 25–30%
-- [ ] Implement **responsive breakpoints**:
+- [x] Implement **responsive breakpoints**:
   - ≥1280px → Full 3-panel
   - <1024px → Collapse right panel
   - <768px → Stacked mobile layout
-- [ ] Build the **Top Navigation Bar** (sticky, `#0A0A0A` background):
+- [x] Build the **Top Navigation Bar** (sticky, `#0A0A0A` background):
   - Logo (top-left)
   - Live counters (Active Conflicts, Tensions)
   - `LIVE` indicator (green pulse animation)
   - "Live View" button, "Predictions" button
   - "Subscribe" CTA, "Sign In"
   - Activity Pulse icon
-- [ ] Build the **scrolling news ticker** below nav:
+- [x] Build the **scrolling news ticker** below nav:
   - Auto-scroll left
   - Pause on hover
   - Click → open event detail

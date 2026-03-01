@@ -1,0 +1,202 @@
+/* =============================================
+   Navbar Component Styles
+   Design Doc §4 — Top Navigation Bar
+   ============================================= */
+
+.wo-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--nav-height);
+  padding: 0 var(--spacing-lg);
+  background: var(--bg-secondary);
+  gap: var(--spacing-md);
+}
+
+/* ---- Left Section ---- */
+.wo-navbar__left {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  flex-shrink: 0;
+}
+
+/* Logo */
+.wo-navbar__logo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  text-decoration: none;
+  color: var(--text-primary);
+  transition: opacity var(--transition-fast);
+}
+
+.wo-navbar__logo:hover {
+  opacity: 0.85;
+  color: var(--text-primary);
+}
+
+.wo-navbar__logo-icon {
+  font-size: 22px;
+  color: var(--signal-red);
+  filter: drop-shadow(0 0 6px rgba(255, 59, 59, 0.4));
+}
+
+.wo-navbar__logo-text {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* Divider */
+.wo-navbar__divider {
+  width: 1px;
+  height: 24px;
+  background: var(--border-light);
+  flex-shrink: 0;
+}
+
+/* Counters */
+.wo-navbar__counters {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+.wo-navbar__counter {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.wo-navbar__counter-value {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.wo-navbar__counter-label {
+  font-size: var(--text-micro);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+/* ---- Right Section ---- */
+.wo-navbar__right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+/* Activity Pulse Bell */
+.wo-navbar__activity-pulse {
+  position: relative;
+  background: none;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  padding: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  width: 34px;
+  height: 34px;
+}
+
+.wo-navbar__activity-pulse:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-hover);
+  color: var(--text-primary);
+}
+
+.wo-navbar__activity-dot {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 7px;
+  height: 7px;
+  background: var(--signal-red);
+  border-radius: 50%;
+  border: 1.5px solid var(--bg-secondary);
+  animation: pulse-live 2s ease-in-out infinite;
+}
+
+/* ---- Mobile Hamburger ---- */
+.wo-navbar__hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  background: none;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 7px 6px;
+  cursor: pointer;
+}
+
+.wo-navbar__hamburger span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: var(--text-secondary);
+  border-radius: 1px;
+  transition: all var(--transition-fast);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 1024px) {
+  .wo-navbar__counters {
+    gap: var(--spacing-md);
+  }
+
+  .wo-navbar__counter-label {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .wo-navbar {
+    padding: 0 var(--spacing-md);
+  }
+
+  .wo-navbar__counters {
+    display: none;
+  }
+
+  .wo-navbar__divider {
+    display: none;
+  }
+
+  .wo-navbar__hamburger {
+    display: flex;
+  }
+
+  .wo-navbar__right {
+    display: none;
+    position: absolute;
+    top: var(--nav-height);
+    left: 0;
+    right: 0;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-subtle);
+    flex-direction: column;
+    padding: var(--spacing-md);
+    gap: var(--spacing-sm);
+    z-index: 99;
+  }
+
+  .wo-navbar__right--open {
+    display: flex;
+  }
+
+  .wo-navbar__right .wo-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
