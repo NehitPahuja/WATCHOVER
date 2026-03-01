@@ -2,10 +2,12 @@
  * GET /api/events
  *
  * Returns a paginated, filterable list of intelligence events.
- * Cached in Redis for fast edge responses.
+ * Uses Redis cache for hot feed, falls back to Postgres.
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node'
+import { createDb } from '../../server/db'
+import { getCachedFeed, type EventListParams } from '../../server/services/events'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'GET') {
@@ -22,28 +24,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       cursor,
     } = req.query
 
-    // TODO: Implement when database is provisioned
-    // 1. Check Redis cache first
-    // 2. If miss, query Postgres with filters
-    // 3. Populate cache
-    // 4. Return paginated results
-
     const parsedLimit = Math.min(parseInt(limit as string, 10) || 50, 100)
 
-    return res.status(200).json({
-      data: [],
-      nextCursor: null,
-      meta: {
-        filters: {
-          severity: severity || null,
-          sentiment: sentiment || null,
-          region: region || null,
-          since: since || null,
-        },
-        limit: parsedLimit,
-        cursor: cursor || null,
-      },
-    })
+    const params: EventListParams = {
+      severity: severity as EventListParams['severity'],
+      sentiment: sentiment as EventListParams['sentiment'],
+      region: region as string | undefined,
+      since: since as string | undefined,
+      limit: parsedLimit,
+      cursor: cursor as string | undefined,
+    }
+
+    const db = createDb()
+    const variant = [severity, sentiment, region].filter(Boolean).join(':') || 'default'
+    const result = await getCachedFeed(db, variant, params)
+
+    // Cache headers for CDN
+    res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=30')
+
+    return res.status(200).json(result)
   } catch (error) {
     console.error('Error fetching events:', error)
     return res.status(500).json({ error: 'Internal server error' })

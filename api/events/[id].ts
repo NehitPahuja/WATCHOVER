@@ -5,6 +5,8 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node'
+import { createDb } from '../../server/db'
+import { getEventDetail } from '../../server/services/events'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'GET') {
@@ -18,12 +20,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: 'Event ID is required' })
     }
 
-    // TODO: Implement when database is provisioned
-    // 1. Query event by ID from Postgres
-    // 2. Join event_sources
-    // 3. Return full detail
+    const db = createDb()
+    const event = await getEventDetail(db, id)
 
-    return res.status(404).json({ error: 'Event not found' })
+    if (!event) {
+      return res.status(404).json({ error: 'Event not found' })
+    }
+
+    // Longer cache for individual events (they don't change often)
+    res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
+
+    return res.status(200).json(event)
   } catch (error) {
     console.error('Error fetching event:', error)
     return res.status(500).json({ error: 'Internal server error' })

@@ -106,13 +106,13 @@
 
 ### 1.3 API — Events & Feed
 
-- [ ] Create Postgres **`events` table**: `id, title, summary, region, lat, lng, severity, sentiment, confidence, created_at, source_refs[]`
-- [ ] Create **`event_sources` table**: normalized sources + canonical URLs
-- [ ] Build API endpoints:
-  - `GET /events` (paginated, filterable by severity, region, date range)
+- [x] Create Postgres **`events` table**: `id, title, summary, region, lat, lng, severity, sentiment, confidence, created_at, source_refs[]` — Done in Phase 0.3
+- [x] Create **`event_sources` table**: normalized sources + canonical URLs — Done in Phase 0.3
+- [x] Build API endpoints:
+  - `GET /events` (paginated, filterable by severity, region, date range) — Redis-cached
   - `GET /events/{id}` (full detail with sources)
-- [ ] Implement **Redis caching** for feed (`feed:latest:{variant}`)
-- [ ] Set up **TanStack Query** on frontend for data fetching/caching
+- [x] Implement **Redis caching** for feed (`feed:latest:{variant}`) — 30s TTL, auto-fallback
+- [x] Set up **TanStack Query** on frontend for data fetching/caching — useEvents, useInfiniteEvents, useEventDetail + realtime cache updater
 
 ### 1.4 3D Globe Visualization (Center Panel)
 
