@@ -1,0 +1,306 @@
+
+
+## 1) Recommended Tech Stack 
+
+### Frontend (Web App)
+
+**Goal:** 60fps globe + dense data UI + real-time panels + charts
+
+* **TypeScript + React** (or Preact)
+* **Vite** for bundling (fast dev + optimized builds) ([GitHub][1])
+* **MapLibre GL + deck.gl** for 3D globe + layered markers (matches your design) ([GitHub][1])
+* **D3** for micro charts (tension index, prediction trend lines) ([GitHub][1])
+* **TanStack Query** for data fetching/caching (recommended; not in repo snippet but ideal for this pattern)
+* **i18next** if you want multilingual expansion (worldmonitor does this) ([GitHub][1])
+* **PWA** (offline map tiles / cached UI, installable) via `vite-plugin-pwa` ([GitHub][1])
+* **Sentry** for error monitoring ([GitHub][1])
+
+### Desktop App (Optional but on-brand)
+
+If Conflictly wants “war-room desktop app” feel:
+
+* **Tauri v2** (small footprint, cross-platform) ([GitHub][1])
+
+### Backend (API + Realtime)
+
+This product needs two backend “planes”:
+
+**Plane A — Stateless API (Edge / Serverless)**
+
+* **Vercel Functions / Edge Functions** (or Cloudflare Workers)
+
+  * great for: RSS/news fetchers, prediction APIs, read-mostly endpoints, auth checks, caching, rate limit
+* **OpenAPI / proto-first contracts** (worldmonitor emphasizes typed services; do the same for reliability) ([GitHub][2])
+
+**Plane B — Stateful Realtime Relay**
+
+* A small always-on service (Fly.io / Railway / ECS)
+* Responsibilities:
+
+  * WebSocket hub for clients
+  * Ingest external streams (telemetry, OSINT channels, scrapers, etc.)
+  * Fan-out updates to subscribers
+  * Background jobs / polling
+
+Worldmonitor explicitly uses a **relay** approach for AIS/OpenSky/Telegram + a shared secret from Vercel → relay. This maps perfectly to Conflictly’s “LIVE” UI. ([GitHub][3])
+
+### Data Stores
+
+* **Postgres** (primary system of record: events, predictions, votes, subscriptions, users, audit logs)
+* **Redis (Upstash)** for:
+
+  * cross-user cache (feed dedupe, AI summaries, computed indices)
+  * rate limiting
+  * real-time “hot” state (latest counters)
+    ([GitHub][1])
+* **Object storage** (S3/R2) for media snapshots, thumbnails, exported reports
+
+### AI / Summarization (Optional)
+
+If you’ll do “Smart Digest” / confidence scores:
+
+* Pluggable providers with fallback chain
+* Cache results in Redis to avoid repeated cost (worldmonitor does dedupe/caching pattern) ([GitHub][2])
+
+### Auth + Billing
+
+* **Auth:** Clerk / Auth0 / NextAuth (if Next.js)
+* **Billing:** Stripe
+* Model subscription tiers like “Signal Clearance Required” (your UI already implies this)
+
+### Testing & Quality
+
+* **Playwright** for e2e and visual regression (worldmonitor uses it) ([GitHub][1])
+* **Contract tests** for API/proto
+* **Load tests** on WS fanout endpoints
+
+---
+
+## 2) Conflictly Technical Design Doc (Tech Doc)
+
+### 2.1 Purpose
+
+Build a real-time “situational awareness” product with:
+
+* live event feed
+* interactive globe with layers
+* predictions marketplace / forecasting module
+* subscription gating
+* analytics panels (markets/keywords/tension index equivalents)
+
+### 2.2 Non-Functional Requirements
+
+* **60fps map interactions**
+* **P95 API < 300ms** (cached paths)
+* **Realtime latency < 2s** for “LIVE” feed updates
+* **Graceful degradation** (WS down → polling fallback)
+* **Strong audit trail** for edits, classifications, confidence adjustments
+
+---
+
+## 2.3 System Architecture (High Level)
+
+**Clients**
+
+* Web (PWA)
+* Desktop (Tauri)
+
+**Services**
+
+1. **API Gateway (Serverless/Edge)**
+
+   * REST endpoints: `/events`, `/predictions`, `/votes`, `/layers`, `/keywords`, `/indices`
+   * Auth middleware + RBAC
+   * Read-heavy caching in Redis
+
+2. **Realtime Relay (Stateful)**
+
+   * WebSocket: `wss://relay.conflictly.app`
+   * Publishes:
+
+     * `events:new`
+     * `events:update`
+     * `predictions:update`
+     * `counters:update`
+   * Ingests upstream sources via connectors and scheduled polling
+
+3. **Ingestion Workers**
+
+   * RSS/news polling
+   * curated connectors (APIs)
+   * optional Telegram/OSINT channel pollers (worldmonitor pattern) ([GitHub][3])
+
+**Storage**
+
+* Postgres (truth)
+* Redis (speed)
+* Object storage (media)
+
+This “Edge API + Relay” split is directly validated by worldmonitor’s environment and docs design: serverless features + an external relay for high-frequency streams. ([GitHub][3])
+
+---
+
+## 2.4 Data Model (Core)
+
+### Tables (Postgres)
+
+* `users`
+* `orgs` (if B2B)
+* `events`
+
+  * `id, title, summary, region, lat, lng, severity, sentiment, confidence, created_at, source_refs[]`
+* `event_sources`
+
+  * normalized sources + canonical URLs
+* `layers`
+
+  * catalog of map layers and their data source
+* `predictions`
+
+  * `id, question, description, category, closes_at, resolution_rules, status`
+* `prediction_votes`
+
+  * `prediction_id, user_id, side, weight, created_at`
+* `prediction_snapshots`
+
+  * computed probability timeline points for charting
+* `subscriptions`
+* `audit_logs`
+
+### Redis Keys (examples)
+
+* `feed:latest:{variant}` → list of event ids
+* `counters:{variant}` → active, tensions, aircraft/ships counts
+* `prediction:prob:{id}` → latest probability + sparkline bins
+* `cache:ai:brief:{date}:{variant}` → daily smart digest
+
+---
+
+## 2.5 Realtime Protocol (WebSocket)
+
+**Channels**
+
+* `global` (headline counters)
+* `region:{code}`
+* `prediction:{id}`
+* `layer:{layer_id}`
+
+**Message Envelope**
+
+```json
+{
+  "type": "events:new",
+  "ts": 1710000000,
+  "payload": { "...": "..." }
+}
+```
+
+**Security**
+
+* Signed JWT from API used to auth WS
+* For server-to-relay, shared secret header (mirrors worldmonitor’s relay secret pattern) ([GitHub][3])
+
+---
+
+## 2.6 Map / Globe Rendering Strategy
+
+* Map engine: **MapLibre GL**
+* Visualization: **deck.gl layers**
+
+  * IconLayer / ScatterplotLayer / ArcLayer / HeatmapLayer
+* Clustering: server-side precluster OR client-side supercluster approach
+* Progressive disclosure:
+
+  * show high-level markers at low zoom
+  * reveal detail layers only at higher zoom
+
+This is exactly the proven approach described in worldmonitor’s docs (“deck.gl + MapLibre”, clustering, progressive disclosure). ([GitHub][4])
+
+---
+
+## 2.7 Predictions Module Implementation
+
+**Core mechanics**
+
+* Votes create a “market probability” (choose a simple model first):
+
+  * baseline: weighted ratio YES/(YES+NO)
+  * later: log-odds + liquidity curve
+* Snapshots stored periodically (or on vote) for charting
+
+**States**
+
+* Active → Closed → Resolved
+* Subscription gating:
+
+  * View allowed
+  * Vote gated (like “Signal Clearance Required”)
+
+---
+
+## 2.8 Caching & Rate Limiting
+
+* **Upstash Redis** is ideal because it pairs well with edge/serverless and supports ratelimit libs (worldmonitor uses Upstash ratelimit + redis libs). ([GitHub][1])
+* Cache tiers:
+
+  1. CDN cache for static layer catalogs
+  2. Redis for computed counters, AI briefs, deduped event ids
+  3. Postgres as source of truth
+
+---
+
+## 2.9 Deployment
+
+**Option A (Closest to worldmonitor)**
+
+* Frontend + API: **Vercel**
+* Redis: **Upstash**
+* Relay: **Railway** or **Fly.io**
+* Postgres: **Neon** or **Supabase**
+
+This matches the repo’s production-friendly pattern: Vercel + Upstash + separate relay server. ([GitHub][3])
+
+**Option B (All-in Cloudflare)**
+
+* Pages + Workers + Durable Objects (DO as WS hub)
+* D1/Postgres external
+* R2 object storage
+
+---
+
+## 2.10 Observability
+
+* **Sentry** (frontend + backend) ([GitHub][1])
+* Structured logs on relay + ingestion
+* Metrics:
+
+  * WS connected clients
+  * message fanout rate
+  * ingestion lag
+  * event dedupe hit ratio
+  * cache hit ratio
+  * P95 API times
+
+---
+
+## 2.11 Security & Abuse Controls
+
+* Rate limit:
+
+  * API: Upstash Ratelimit ([GitHub][1])
+  * WS: connection limits per IP/user
+* Input sanitization for summaries/HTML (DOMPurify is used in worldmonitor deps; recommended here too) ([GitHub][1])
+* RBAC enforced server-side
+* Audit log for all moderator/editor actions
+
+---
+
+## 3) What I’d build first (MVP sequence)
+
+1. **Event feed + event detail modal** (your UI already nailed this)
+2. **Map/globe + markers + clustering**
+3. **Counters + “Global Tension Index” style computed metric**
+4. **Predictions list + detail page + vote gating**
+5. **Realtime relay** once polling MVP is stable
+6. **Subscriptions + roles + admin tooling**
+

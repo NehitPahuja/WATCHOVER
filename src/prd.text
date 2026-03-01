@@ -1,0 +1,427 @@
+
+# 📘 Product Requirements Document (PRD)
+
+## Product: WatchOver Dashboard
+
+## Version: 1.0
+
+## Owner: Product Team
+
+## Status: Draft
+
+---
+
+# 1. 🧭 Overview
+
+## 1.1 Purpose
+
+The Conflictly Dashboard is the central command interface for users to:
+
+* Monitor conflicts and cases
+* Track resolution progress
+* Manage participants
+* View analytics and trends
+* Take action (mediate, assign, escalate, close)
+
+It serves as the operational control center for individuals and organizations using Conflictly.
+
+---
+
+# 2. 🎯 Goals & Objectives
+
+## 2.1 Primary Goals
+
+1. Provide real-time visibility into active conflicts
+2. Reduce resolution time
+3. Increase transparency and accountability
+4. Enable structured conflict workflows
+5. Provide actionable insights via analytics
+
+## 2.2 Success Metrics (KPIs)
+
+| Metric                 | Target                    |
+| ---------------------- | ------------------------- |
+| Time to first response | < 24 hours                |
+| Avg resolution time    | -20% within 3 months      |
+| Dashboard engagement   | > 70% weekly active users |
+| Escalation rate        | < 15%                     |
+| User satisfaction      | > 4.2/5                   |
+
+---
+
+# 3. 👤 User Personas
+
+## 3.1 Admin
+
+* Manages all conflicts
+* Assigns mediators
+* Views analytics
+* Controls permissions
+
+## 3.2 Mediator / Case Manager
+
+* Handles assigned conflicts
+* Communicates with participants
+* Logs actions and notes
+* Updates status
+
+## 3.3 Participant
+
+* Views own conflict cases
+* Submits updates or evidence
+* Tracks resolution progress
+
+## 3.4 Executive / HR Leader
+
+* Views analytics only
+* Monitors risk trends
+* Reviews escalations
+
+---
+
+# 4. 🏗 Product Scope
+
+## 4.1 In Scope
+
+* Dashboard overview
+* Case management
+* Workflow statuses
+* Filtering and search
+* Analytics visualizations
+* Notifications
+* Role-based access control
+
+## 4.2 Out of Scope (V1)
+
+* AI-powered resolution suggestions (future)
+* External legal integrations
+* Video conferencing
+* Multi-language localization
+
+---
+
+# 5. 🧩 Core Features
+
+---
+
+## 5.1 Dashboard Overview
+
+### Purpose
+
+Provide snapshot of key data.
+
+### Components
+
+* Total Active Conflicts
+* Pending Cases
+* Escalated Cases
+* Resolved Cases
+* Average Resolution Time
+* SLA Breach Warnings
+
+### Functional Requirements
+
+* Real-time data refresh (≤ 60 sec delay)
+* Clickable widgets → drill-down views
+* Date range filter (7d, 30d, 90d, custom)
+
+---
+
+## 5.2 Conflict Case List
+
+### View Types
+
+* Table view (default)
+* Kanban view (status-based)
+* Compact list (mobile)
+
+### Data Columns
+
+* Case ID
+* Title
+* Category
+* Status
+* Priority
+* Assigned Mediator
+* Created Date
+* Last Updated
+* SLA Due Date
+
+### Functional Requirements
+
+* Sortable columns
+* Multi-filter (status, date, mediator, priority)
+* Bulk actions (assign, close, escalate)
+* Export (CSV)
+
+---
+
+## 5.3 Conflict Case Detail Page
+
+### Sections
+
+1. Case Summary
+2. Timeline / Activity Log
+3. Participants
+4. Messages
+5. Evidence Upload
+6. Resolution Notes
+7. Status Control
+
+### Functional Requirements
+
+* Full audit trail
+* Timestamped logs
+* Attachments support (PDF, image, doc)
+* Internal vs external notes
+* Status change triggers notifications
+* Editable fields (based on role)
+
+---
+
+## 5.4 Status Workflow
+
+### Standard Flow
+
+Reported → Under Review → Mediation → Escalated → Resolved → Closed
+
+### Requirements
+
+* Admin-configurable statuses
+* Status transition rules
+* SLA countdown per stage
+* Automatic escalation rules
+
+---
+
+## 5.5 Notifications System
+
+### Types
+
+* Email
+* In-app notifications
+* Optional Slack/Teams integration (future)
+
+### Triggers
+
+* New case created
+* Assigned to mediator
+* Status changed
+* SLA breach
+* Comment added
+
+### Requirements
+
+* Notification preferences per user
+* Real-time badge indicator
+* Mark as read
+
+---
+
+## 5.6 Analytics & Reporting
+
+### Dashboard Metrics
+
+* Conflict volume by department
+* Conflict type distribution
+* Resolution time trend
+* Escalation rate
+* Recurring participant patterns
+* Heat map (by team or region)
+
+### Functional Requirements
+
+* Date filtering
+* Export to CSV/PDF
+* Visual charts (bar, line, pie)
+* Role-based visibility
+
+---
+
+## 5.7 Search & Filtering
+
+* Global search bar
+* Search by:
+
+  * Case ID
+  * Participant name
+  * Keywords
+* Advanced filter drawer
+* Saved filters
+
+---
+
+## 5.8 Role-Based Access Control (RBAC)
+
+| Role        | Access              |
+| ----------- | ------------------- |
+| Admin       | Full access         |
+| Mediator    | Assigned cases only |
+| Participant | Own cases only      |
+| Executive   | Read-only analytics |
+
+### Requirements
+
+* Permission matrix
+* Secure API enforcement
+* Field-level visibility control
+
+---
+
+# 6. 🖥 UX Requirements
+
+## 6.1 Design Principles
+
+* Clean, professional interface
+* Low cognitive load
+* Clear status indicators (color-coded)
+* Accessible (WCAG 2.1 AA)
+
+## 6.2 Responsive Design
+
+* Desktop-first
+* Tablet optimized
+* Mobile functional (limited analytics)
+
+## 6.3 Accessibility
+
+* Keyboard navigation
+* Screen reader support
+* High-contrast mode
+
+---
+
+# 7. 🔐 Security & Compliance
+
+## 7.1 Data Security
+
+* End-to-end encryption
+* HTTPS required
+* Data encryption at rest
+* Role-based access enforcement
+
+## 7.2 Audit Logging
+
+* All actions logged
+* Immutable logs
+* Admin view for audits
+
+## 7.3 Compliance (Future Consideration)
+
+* GDPR
+* HIPAA (if healthcare)
+* SOC 2
+
+---
+
+# 8. 🧱 Technical Requirements
+
+## 8.1 Architecture
+
+* Frontend: React / Next.js
+* Backend: Node.js / Django
+* Database: PostgreSQL
+* Real-time updates: WebSockets
+* Cloud hosting: AWS / GCP
+
+## 8.2 Performance
+
+* Page load < 2.5s
+* API response < 300ms
+* 99.9% uptime
+
+## 8.3 Scalability
+
+* Multi-tenant architecture
+* 10,000+ cases per org
+* Horizontal scaling
+
+---
+
+# 9. 🔄 API Requirements
+
+### Core Endpoints
+
+* GET /cases
+* GET /cases/{id}
+* POST /cases
+* PATCH /cases/{id}
+* DELETE /cases/{id}
+* GET /analytics
+* POST /notifications
+
+---
+
+# 10. 📊 Data Model (High-Level)
+
+### Entities
+
+* User
+* Organization
+* Case
+* Participant
+* Message
+* Attachment
+* Status
+* AuditLog
+* Notification
+
+---
+
+# 11. 🚀 Roadmap
+
+## Phase 1 (MVP)
+
+* Dashboard overview
+* Case list
+* Case detail
+* Basic analytics
+* Notifications
+* RBAC
+
+## Phase 2
+
+* Advanced analytics
+* SLA automation
+* Custom workflows
+* Bulk actions
+
+## Phase 3
+
+* AI insights
+* Conflict risk prediction
+* Sentiment analysis
+* Integrations (Slack, HRIS)
+
+---
+
+# 12. ⚠ Risks & Mitigation
+
+| Risk                  | Mitigation                 |
+| --------------------- | -------------------------- |
+| Sensitive data breach | Encryption + strict RBAC   |
+| Low adoption          | Onboarding flow + training |
+| Complex workflows     | Admin customization        |
+| Legal compliance gaps | Early compliance audit     |
+
+---
+
+# 13. 📈 Future Opportunities
+
+* AI mediator assistant
+* Anonymous reporting
+* Behavioral pattern detection
+* Org health score
+* Predictive conflict analytics
+
+---
+
+# 14. Definition of Done
+
+* All functional requirements implemented
+* RBAC verified
+* Unit + integration tests passed
+* Performance benchmarks met
+* UX approved
+* Security audit completed
+

@@ -1,0 +1,546 @@
+Below is a **comprehensive Product Design Document (PDD)** based on:
+
+* The provided UI screenshots
+* The Conflictly dashboard structure
+* The Predictions and Event Detail views
+* The overall visual language and interaction patterns
+
+This document focuses specifically on **design system, UX architecture, visual behavior, and interaction logic**, not business strategy.
+
+---
+
+# 📘 WatchOver – Product Design Document
+
+## Version: 1.0
+
+## Scope: Dashboard, Predictions, Event Detail, Data Panels
+
+## Design System: Dark Tactical Intelligence Interface
+
+---
+
+# 1. 🎯 Design Vision
+
+WatchOver is positioned as:
+
+> A real-time geopolitical intelligence & forecasting interface combining live event tracking, predictive markets, and data analytics.
+
+The UI language communicates:
+
+* Authority
+* Precision
+* Real-time intelligence
+* Tactical awareness
+* Financial terminal aesthetic (Bloomberg / Palantir / trading terminal influence)
+
+The design must feel:
+
+* Live
+* Mission-critical
+* Analytical
+* Data-dense but controlled
+
+---
+
+# 2. 🧠 Core Design Principles
+
+### 2.1 Tactical Minimalism
+
+* Black / near-black background
+* Thin separators
+* Sparse but intentional color
+* High-contrast signal colors
+
+### 2.2 Signal-Driven Color System
+
+Color communicates meaning, never decoration.
+
+| Meaning          | Color  |
+| ---------------- | ------ |
+| Escalation       | Red    |
+| De-escalation    | Green  |
+| Neutral / Medium | Yellow |
+| Informational    | Blue   |
+| Warning          | Amber  |
+
+---
+
+# 3. 🏗 Layout Architecture
+
+## 3.1 Global Layout Grid
+
+Structure (Desktop ≥ 1280px):
+
+```
+-------------------------------------------------
+| Top Navigation Bar                            |
+-------------------------------------------------
+| Left Panel | Center Globe | Right Panel       |
+-------------------------------------------------
+| Bottom Tension Graph                          |
+-------------------------------------------------
+```
+
+### Column Distribution
+
+* Left Panel: 22–25%
+* Center Globe: 45–50%
+* Right Panel: 25–30%
+
+Responsive behavior:
+
+* <1024px → right panel collapses
+* <768px → stacked layout
+
+---
+
+# 4. 🔝 Top Navigation Bar
+
+## Components
+
+* Logo (top-left)
+* Live counters:
+
+  * Active conflicts
+  * Tensions
+* LIVE indicator (green pulsing)
+* Live View button
+* Predictions button
+* Subscribe CTA
+* Sign In
+* Activity Pulse Icon
+
+## Behavior
+
+* Sticky at top
+* Background: #0A0A0A
+* Subtle bottom border
+* Scrolling ticker below (Latest News)
+
+### Ticker Behavior
+
+* Auto-scroll left
+* Pause on hover
+* Click → open event detail
+
+---
+
+# 5. 🌍 Centerpiece: 3D Globe Visualization
+
+## Visual Behavior
+
+* Rotatable globe
+* Dark terrain style
+* Heatmap overlays
+* Event markers (small glowing nodes)
+
+## Event Marker Types
+
+| Type              | Visual           |
+| ----------------- | ---------------- |
+| Explosion         | Red pulse        |
+| Military aircraft | Blue moving line |
+| Economic          | Yellow marker    |
+| Political         | Cyan             |
+
+## Interaction
+
+* Hover → tooltip
+* Click → event detail modal
+* Zoom in/out
+* Auto-rotate (slow)
+
+## Bottom Overlay
+
+Military Aircraft Counter
+Global Tension Index Graph
+
+---
+
+# 6. 📊 Global Tension Index Component
+
+Located under globe.
+
+## Features
+
+* 7-day line graph
+* Red/Green delta indicator
+* % change vs last week
+* Hover to inspect day values
+
+Graph style:
+
+* Thin line
+* Subtle grid
+* No heavy chart chrome
+
+---
+
+# 7. 📥 Left Panel – Pulse Feed
+
+## Sections
+
+1. Smart Digest (locked)
+2. Pulse Feed
+3. Filters
+4. Search
+5. Event Cards
+
+---
+
+## 7.1 Event Card Design
+
+Card includes:
+
+* Title
+* Category Tag (HIGH / MEDIUM)
+* Confidence %
+* Source
+* Timestamp
+* Country flag
+* Expand arrow
+
+### States
+
+* Default
+* Hover (border glow)
+* Expanded (show summary)
+* Escalation (red accent)
+* De-escalation (green accent)
+
+---
+
+## 7.2 Filtering System
+
+Tabs:
+
+* High
+* Medium
+* 24H
+* Escalation
+* De-escalation
+
+Search bar with:
+
+* Filter icon
+* Keyword matching
+* Country filtering
+
+---
+
+# 8. 📈 Right Panel
+
+Three stacked modules:
+
+1. Top Predictions
+2. Markets
+3. Top Keywords (24H)
+
+---
+
+# 8.1 Predictions Module
+
+### Card Layout
+
+* Category icon (MIL)
+* Vote count
+* Time remaining
+* Question
+* Probability %
+* Line chart (trend)
+* Yes / No split bar
+
+### Interaction
+
+* Click → full prediction page
+* Sign-in required to vote
+* Locked state if unsubscribed
+
+---
+
+# 8.2 Markets Module
+
+Live indices list:
+
+* S&P 500
+* NASDAQ
+* Dow Jones
+* DAX
+
+Each shows:
+
+* Value
+* % change
+* Red/Green indicator
+
+Refresh icon top-right.
+
+---
+
+# 8.3 Top Keywords
+
+Ranked list:
+
+#1 Iran
+#2 Israel
+#3 Air
+
+Includes mention count.
+
+Clickable → filter feed by keyword.
+
+---
+
+# 9. 🔮 Predictions Page
+
+## Layout
+
+Header:
+
+* Title
+* Description
+* Active / Resolved tabs
+* Vote count
+* Countdown
+
+Main content:
+
+* Chart
+* Yes/No probability bar
+* Vote CTA
+
+Right sidebar:
+
+* Subscription wall (Signal Clearance Required)
+
+---
+
+## 9.1 Probability Chart
+
+* Time-series line
+* Green for YES trend
+* Thin axis grid
+* Smooth animation updates
+
+---
+
+## 9.2 Vote Interaction Flow
+
+If not signed in:
+→ “Sign in to vote”
+
+If signed in but not subscribed:
+→ Show subscription modal
+
+If subscribed:
+→ Yes / No button
+→ Confirmation modal
+→ Update probability
+
+---
+
+# 10. 📰 Event Detail Modal
+
+Overlay modal.
+
+## Header
+
+* Country
+* Close button
+* Title
+
+## Metadata
+
+* Severity
+* Sentiment
+* Confidence %
+* Published timestamp
+* Region
+* 24H Activity count
+
+## Summary
+
+Paragraph explanation.
+
+## Sources
+
+* Listed media sources
+* Contradictions section
+* Requested by user
+
+## Bottom CTA
+
+“Source” external link.
+
+---
+
+# 11. 🔐 Subscription Design
+
+Feature name: Signal Clearance
+
+Locked content pattern:
+
+* Dark overlay
+* Red lock icon
+* CTA button
+* Pricing preview
+
+No intrusive popups.
+
+---
+
+# 12. 🎨 Design System
+
+## Typography
+
+Primary: Inter / Space Grotesk
+Monospace: JetBrains Mono (data labels)
+
+Hierarchy:
+
+| Level | Size    |
+| ----- | ------- |
+| H1    | 28–32px |
+| H2    | 22px    |
+| Body  | 14–16px |
+| Micro | 12px    |
+
+---
+
+## Color Palette
+
+Background:
+
+* #000000
+* #0A0A0A
+* #121212
+
+Text:
+
+* #FFFFFF
+* #BBBBBB
+* #666666
+
+Signal:
+
+* Red: #FF3B3B
+* Green: #00FF85
+* Yellow: #FFC857
+* Blue: #2CA8FF
+
+---
+
+## Borders & Effects
+
+* 1px subtle borders
+* Low glow on hover
+* Soft drop shadows
+* Thin grid overlays
+
+---
+
+# 13. 🧩 Micro-Interactions
+
+* Live pulse animation
+* Counter increment animation
+* Marker glow effect
+* Chart smooth transitions
+* Subtle hover highlights
+
+No bouncy animations.
+
+---
+
+# 14. 🔄 State Management
+
+Key states:
+
+* Loading (skeleton UI)
+* Live updating
+* Error (data fetch failure)
+* Empty state
+* Locked state
+* Escalation spike state
+
+---
+
+# 15. 🧠 Data Hierarchy
+
+Primary Focus:
+
+1. Globe
+2. Live tension
+3. Escalating events
+
+Secondary:
+4. Predictions
+5. Markets
+6. Keywords
+
+Tertiary:
+7. Detail analytics
+
+---
+
+# 16. Accessibility
+
+* Color + icon (not color alone)
+* Keyboard navigable
+* Tooltip readable
+* Contrast ≥ WCAG AA
+* Focus states visible
+
+---
+
+# 17. Performance Considerations
+
+* Globe must remain 60fps
+* Lazy load right panel data
+* Virtualize feed list
+* WebSocket for live events
+* Debounced search
+
+---
+
+# 18. Motion Design Language
+
+* Subtle
+* Linear
+* No playful easing
+* Slight fade transitions
+* Slow global rotation
+
+---
+
+# 19. Responsive Strategy
+
+Desktop: Full 3-panel
+Tablet: Collapse right panel
+Mobile:
+
+* Globe fullscreen
+* Feed slide-up
+* Predictions separate page
+
+---
+
+# 20. Future Design Extensions
+
+* AI-generated insights panel
+* Risk heatmap overlay
+* Personalized alert dashboard
+* Multi-globe region split view
+* Time-travel mode (replay events)
+
+---
+
+# 21. Definition of Design Complete
+
+* All components in Figma
+* Design tokens defined
+* Responsive states covered
+* Interaction specs documented
+* Accessibility verified
+* Dark mode contrast tested
+
+
