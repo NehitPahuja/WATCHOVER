@@ -52,12 +52,12 @@
 
 ### 0.3 Backend & Infrastructure Scaffolding
 
-- [ ] Provision **Postgres** database (Neon or Supabase)
-- [ ] Provision **Redis** (Upstash) for caching, rate limiting, hot state
-- [ ] Set up **Vercel** project for frontend + Edge/Serverless API functions
-- [ ] Define **OpenAPI spec** (proto-first contracts) for all endpoints
-- [ ] Set up **Auth** (Clerk or Auth0) with RBAC roles: Admin, Subscriber, Free User
-- [ ] Set up **Stripe** for subscription billing ("Signal Clearance" tiers)
+- [x] Provision **Postgres** database (Neon or Supabase) — Schema defined in Drizzle ORM
+- [x] Provision **Redis** (Upstash) for caching, rate limiting, hot state — Client + key patterns ready
+- [x] Set up **Vercel** project for frontend + Edge/Serverless API functions — vercel.json + api/ routes
+- [x] Define **OpenAPI spec** (proto-first contracts) for all endpoints — server/api/openapi.yaml
+- [x] Set up **Auth** (Clerk or Auth0) with RBAC roles: Admin, Subscriber, Free User — Auth middleware + permissions
+- [x] Set up **Stripe** for subscription billing ("Signal Clearance" tiers) — 3-tier config ready
 
 ---
 

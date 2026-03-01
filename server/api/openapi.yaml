@@ -1,0 +1,429 @@
+openapi: 3.1.0
+info:
+  title: WatchOver API
+  version: 1.0.0
+  description: >
+    Real-time geopolitical intelligence & forecasting API.
+    Provides endpoints for events, predictions, layers, analytics, and subscriptions.
+
+servers:
+  - url: https://watchover.vercel.app/api
+    description: Production
+  - url: http://localhost:5173/api
+    description: Development
+
+tags:
+  - name: Events
+    description: Intelligence event feed
+  - name: Predictions
+    description: Forecasting & prediction markets
+  - name: Layers
+    description: Map data layers
+  - name: Analytics
+    description: Indices, keywords, and metrics
+  - name: Subscriptions
+    description: Billing & subscription management
+
+paths:
+  /events:
+    get:
+      tags: [Events]
+      summary: List events
+      description: Paginated, filterable list of intelligence events.
+      parameters:
+        - name: severity
+          in: query
+          schema:
+            type: string
+            enum: [critical, high, medium, low]
+        - name: sentiment
+          in: query
+          schema:
+            type: string
+            enum: [escalation, de-escalation, neutral]
+        - name: region
+          in: query
+          schema:
+            type: string
+        - name: since
+          in: query
+          description: ISO 8601 timestamp — return events after this time
+          schema:
+            type: string
+            format: date-time
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+            maximum: 100
+        - name: cursor
+          in: query
+          description: Cursor for pagination
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of events
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Event"
+                  nextCursor:
+                    type: string
+                    nullable: true
+
+  /events/{id}:
+    get:
+      tags: [Events]
+      summary: Get event detail
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Full event with sources
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventDetail"
+        "404":
+          description: Event not found
+
+  /predictions:
+    get:
+      tags: [Predictions]
+      summary: List predictions
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, closed, resolved]
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: List of predictions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Prediction"
+
+  /predictions/{id}:
+    get:
+      tags: [Predictions]
+      summary: Get prediction detail with chart data
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Prediction with probability timeline
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PredictionDetail"
+
+  /predictions/{id}/vote:
+    post:
+      tags: [Predictions]
+      summary: Cast a vote on a prediction
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [side]
+              properties:
+                side:
+                  type: string
+                  enum: [yes, no]
+                weight:
+                  type: number
+                  default: 1
+      responses:
+        "200":
+          description: Vote recorded, updated probability returned
+        "401":
+          description: Unauthorized
+        "403":
+          description: Subscription required
+
+  /layers:
+    get:
+      tags: [Layers]
+      summary: List available map layers
+      responses:
+        "200":
+          description: Layer catalog
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Layer"
+
+  /indices/tension:
+    get:
+      tags: [Analytics]
+      summary: Get Global Tension Index
+      parameters:
+        - name: days
+          in: query
+          schema:
+            type: integer
+            default: 7
+      responses:
+        "200":
+          description: Tension index data points
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TensionIndex"
+
+  /keywords:
+    get:
+      tags: [Analytics]
+      summary: Get top trending keywords (24H)
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: Ranked keyword list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Keyword"
+
+  /subscriptions:
+    post:
+      tags: [Subscriptions]
+      summary: Create or update subscription
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tier]
+              properties:
+                tier:
+                  type: string
+                  enum: [analyst, command]
+      responses:
+        "200":
+          description: Stripe checkout session URL
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  checkoutUrl:
+                    type: string
+                    format: uri
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Event:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        summary:
+          type: string
+        region:
+          type: string
+        country:
+          type: string
+        countryCode:
+          type: string
+        lat:
+          type: number
+        lng:
+          type: number
+        severity:
+          type: string
+          enum: [critical, high, medium, low]
+        sentiment:
+          type: string
+          enum: [escalation, de-escalation, neutral]
+        confidence:
+          type: integer
+          minimum: 0
+          maximum: 100
+        category:
+          type: string
+        publishedAt:
+          type: string
+          format: date-time
+
+    EventDetail:
+      allOf:
+        - $ref: "#/components/schemas/Event"
+        - type: object
+          properties:
+            sources:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  url:
+                    type: string
+                    format: uri
+                  credibility:
+                    type: integer
+
+    Prediction:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        question:
+          type: string
+        category:
+          type: string
+        status:
+          type: string
+          enum: [active, closed, resolved]
+        closesAt:
+          type: string
+          format: date-time
+        probabilityYes:
+          type: number
+        totalVotes:
+          type: integer
+        isFeatured:
+          type: boolean
+
+    PredictionDetail:
+      allOf:
+        - $ref: "#/components/schemas/Prediction"
+        - type: object
+          properties:
+            description:
+              type: string
+            resolutionRules:
+              type: string
+            snapshots:
+              type: array
+              items:
+                type: object
+                properties:
+                  probabilityYes:
+                    type: number
+                  totalVotes:
+                    type: integer
+                  snapshotAt:
+                    type: string
+                    format: date-time
+
+    Layer:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        slug:
+          type: string
+        description:
+          type: string
+        layerType:
+          type: string
+        isActive:
+          type: boolean
+
+    TensionIndex:
+      type: object
+      properties:
+        current:
+          type: number
+        change:
+          type: number
+          description: Percentage change vs previous period
+        dataPoints:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+              value:
+                type: number
+
+    Keyword:
+      type: object
+      properties:
+        rank:
+          type: integer
+        keyword:
+          type: string
+        mentionCount:
+          type: integer
+        trend:
+          type: string
+          enum: [up, down, stable]

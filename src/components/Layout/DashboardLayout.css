@@ -1,0 +1,117 @@
+/* =============================================
+   Dashboard Layout — 3-Panel Grid
+   From Design Doc §3.1:
+   Left 22-25% | Center 45-50% | Right 25-30%
+   ============================================= */
+
+.wo-dashboard {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg-primary);
+}
+
+/* ---- Navbar ---- */
+.wo-dashboard__navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: var(--nav-height);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+/* ---- Ticker ---- */
+.wo-dashboard__ticker {
+  height: var(--ticker-height);
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+/* ---- Body (3-panel grid) ---- */
+.wo-dashboard__body {
+  display: grid;
+  grid-template-columns: var(--panel-left-width) 1fr var(--panel-right-width);
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ---- Left Panel ---- */
+.wo-dashboard__left {
+  overflow-y: auto;
+  border-right: 1px solid var(--border-subtle);
+  background: var(--bg-secondary);
+}
+
+/* ---- Center Panel ---- */
+.wo-dashboard__center {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.wo-dashboard__bottom-bar {
+  flex-shrink: 0;
+  border-top: 1px solid var(--border-subtle);
+  background: var(--bg-secondary);
+}
+
+/* ---- Right Panel ---- */
+.wo-dashboard__right {
+  overflow-y: auto;
+  border-left: 1px solid var(--border-subtle);
+  background: var(--bg-secondary);
+}
+
+/* ---- Panel scrollbar styling ---- */
+.wo-dashboard__left::-webkit-scrollbar,
+.wo-dashboard__right::-webkit-scrollbar {
+  width: 4px;
+}
+
+.wo-dashboard__left::-webkit-scrollbar-thumb,
+.wo-dashboard__right::-webkit-scrollbar-thumb {
+  background: var(--text-dim);
+  border-radius: var(--radius-full);
+}
+
+/* =============================================
+   Responsive Breakpoints (Design Doc §19)
+   ============================================= */
+
+/* Tablet: Collapse right panel */
+@media (max-width: 1024px) {
+  .wo-dashboard__body {
+    grid-template-columns: var(--panel-left-width) 1fr;
+  }
+
+  .wo-dashboard__right {
+    display: none;
+  }
+}
+
+/* Mobile: Stacked layout */
+@media (max-width: 768px) {
+  .wo-dashboard__body {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+  }
+
+  .wo-dashboard__left {
+    display: none;
+  }
+
+  .wo-dashboard__right {
+    display: none;
+  }
+
+  .wo-dashboard__center {
+    overflow-y: auto;
+  }
+}
