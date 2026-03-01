@@ -1,0 +1,199 @@
+/* =============================================
+   EventDetailModal Styles
+   Design Doc §10 — Event Detail Modal
+   ============================================= */
+
+.wo-event-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ---- Header ---- */
+.wo-event-detail__header {
+  padding: 0 0 var(--spacing-lg) 0;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: var(--spacing-lg);
+}
+
+.wo-event-detail__header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-sm);
+}
+
+.wo-event-detail__country {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: var(--text-small);
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.wo-event-detail__flag {
+  font-size: 20px;
+}
+
+.wo-event-detail__title {
+  font-size: var(--text-h2);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text-primary);
+}
+
+/* ---- Metadata Grid ---- */
+.wo-event-detail__meta-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.wo-event-detail__meta-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.wo-event-detail__meta-label {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+}
+
+.wo-event-detail__meta-value {
+  font-size: var(--text-body);
+  font-weight: 500;
+}
+
+/* ---- Sections ---- */
+.wo-event-detail__section {
+  margin-bottom: var(--spacing-lg);
+}
+
+.wo-event-detail__section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: var(--text-micro);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: var(--spacing-md);
+  font-weight: 600;
+}
+
+.wo-event-detail__section-title--warn {
+  color: var(--signal-amber);
+}
+
+.wo-event-detail__source-count {
+  background: var(--bg-hover);
+  border-radius: var(--radius-full);
+  padding: 1px 8px;
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+
+.wo-event-detail__summary {
+  font-size: var(--text-body);
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* ---- Sources ---- */
+.wo-event-detail__sources {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.wo-event-detail__source {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-small);
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.wo-event-detail__source:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-hover);
+  color: var(--text-primary);
+}
+
+.wo-event-detail__source-name {
+  flex: 1;
+}
+
+.wo-event-detail__source-cred {
+  font-size: var(--text-micro);
+  font-weight: 600;
+}
+
+.wo-event-detail__source svg {
+  color: var(--text-dim);
+  flex-shrink: 0;
+}
+
+/* ---- Contradictions ---- */
+.wo-event-detail__contradictions {
+  font-size: var(--text-small);
+  color: var(--signal-amber);
+  line-height: 1.6;
+  padding: var(--spacing-md);
+  background: rgba(255, 159, 28, 0.06);
+  border: 1px solid rgba(255, 159, 28, 0.2);
+  border-radius: var(--radius-md);
+}
+
+/* ---- Footer CTA ---- */
+.wo-event-detail__footer {
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.wo-event-detail__source-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--signal-blue-dim);
+  border: 1px solid rgba(44, 168, 255, 0.3);
+  border-radius: var(--radius-md);
+  color: var(--signal-blue);
+  font-family: var(--font-primary);
+  font-size: var(--text-small);
+  font-weight: 600;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.wo-event-detail__source-btn:hover {
+  background: rgba(44, 168, 255, 0.2);
+  border-color: rgba(44, 168, 255, 0.5);
+  color: var(--signal-blue);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 600px) {
+  .wo-event-detail__meta-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

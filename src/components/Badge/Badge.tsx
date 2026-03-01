@@ -1,7 +1,7 @@
 import React from 'react'
 import './Badge.css'
 
-type BadgeSeverity = 'high' | 'medium' | 'low' | 'info' | 'escalation' | 'de-escalation'
+type BadgeSeverity = 'critical' | 'high' | 'medium' | 'low' | 'info' | 'escalation' | 'de-escalation'
 
 interface BadgeProps {
   severity: BadgeSeverity

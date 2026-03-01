@@ -1,0 +1,192 @@
+/* =============================================
+   EventCard Component Styles
+   Design Doc §7.1 — Event Card Design
+   ============================================= */
+
+.wo-event-card {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  padding-bottom: var(--spacing-lg);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  overflow: hidden;
+}
+
+.wo-event-card:hover {
+  border-color: var(--border-hover);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.wo-event-card:focus-visible {
+  outline: 2px solid var(--signal-blue);
+  outline-offset: 2px;
+}
+
+/* ---- Variants ---- */
+.wo-event-card--escalation {
+  border-left: 3px solid var(--signal-red);
+}
+
+.wo-event-card--escalation:hover {
+  box-shadow: inset 0 0 30px rgba(255, 59, 59, 0.03), var(--glow-red);
+}
+
+.wo-event-card--de-escalation {
+  border-left: 3px solid var(--signal-green);
+}
+
+.wo-event-card--de-escalation:hover {
+  box-shadow: inset 0 0 30px rgba(0, 255, 133, 0.03), var(--glow-green);
+}
+
+/* ---- Top row ---- */
+.wo-event-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.wo-event-card__time {
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+/* ---- Title ---- */
+.wo-event-card__title {
+  font-family: var(--font-primary);
+  font-size: var(--text-small);
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.45;
+  margin-bottom: 8px;
+}
+
+.wo-event-card__flag {
+  margin-right: 6px;
+  font-size: 13px;
+}
+
+/* ---- Meta row ---- */
+.wo-event-card__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--text-micro);
+}
+
+.wo-event-card__region {
+  color: var(--text-muted);
+}
+
+.wo-event-card__confidence {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-micro);
+}
+
+/* ---- Expand Arrow ---- */
+.wo-event-card__arrow {
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--text-dim);
+  transition: all var(--transition-base);
+  line-height: 0;
+}
+
+.wo-event-card:hover .wo-event-card__arrow {
+  color: var(--text-muted);
+}
+
+.wo-event-card__arrow--up svg {
+  transform: rotate(180deg);
+}
+
+/* ---- Expanded State ---- */
+.wo-event-card--expanded {
+  background: var(--bg-tertiary);
+  border-color: var(--border-light);
+}
+
+.wo-event-card__expanded {
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--border-subtle);
+  animation: card-expand 200ms ease;
+}
+
+@keyframes card-expand {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.wo-event-card__summary {
+  font-size: var(--text-small);
+  color: var(--text-secondary);
+  line-height: 1.55;
+  margin-bottom: var(--spacing-md);
+}
+
+/* Expanded meta grid */
+.wo-event-card__expanded-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-sm) var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--bg-card);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+}
+
+.wo-event-card__meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.wo-event-card__meta-label {
+  font-size: 10px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-family: var(--font-mono);
+}
+
+.wo-event-card__meta-value {
+  font-size: var(--text-small);
+  font-weight: 500;
+}
+
+/* Detail button */
+.wo-event-card__detail-btn {
+  background: none;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  color: var(--signal-blue);
+  font-family: var(--font-primary);
+  font-size: var(--text-micro);
+  font-weight: 600;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  width: 100%;
+  text-align: center;
+}
+
+.wo-event-card__detail-btn:hover {
+  background: var(--signal-blue-dim);
+  border-color: rgba(44, 168, 255, 0.3);
+}

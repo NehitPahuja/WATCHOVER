@@ -1,8 +1,11 @@
-import { DashboardLayout, Navbar, NewsTicker, Badge, Card } from './components'
+import { DashboardLayout, Navbar, NewsTicker, Badge, PulseFeed } from './components'
 import type { TickerItem } from './components'
+import type { WatchEvent } from './types'
 import './App.css'
 
+// =============================================
 // Mock Data — will be replaced by API calls
+// =============================================
 
 const MOCK_TICKER_ITEMS: TickerItem[] = [
   { id: '1', text: 'Military buildup reported near eastern border region', severity: 'high' },
@@ -15,15 +18,188 @@ const MOCK_TICKER_ITEMS: TickerItem[] = [
   { id: '8', text: 'Arms deal worth $2.3B signed between regional powers', severity: 'high' },
 ]
 
-const MOCK_EVENTS = [
-  { id: '1', title: 'Military Aircraft Detected in Restricted Airspace', severity: 'high' as const, sentiment: 'escalation' as const, confidence: 94, region: 'Middle East', time: '2m ago', country: '🇮🇷' },
-  { id: '2', title: 'Ceasefire Agreement Signed in Eastern Region', severity: 'low' as const, sentiment: 'de-escalation' as const, confidence: 87, region: 'Eastern Europe', time: '8m ago', country: '🇺🇦' },
-  { id: '3', title: 'Naval Fleet Mobilization Detected via Satellite', severity: 'high' as const, sentiment: 'escalation' as const, confidence: 76, region: 'Asia-Pacific', time: '15m ago', country: '🇨🇳' },
-  { id: '4', title: 'Diplomatic Talks Resume After 6-Month Freeze', severity: 'medium' as const, sentiment: 'de-escalation' as const, confidence: 82, region: 'East Asia', time: '23m ago', country: '🇰🇷' },
-  { id: '5', title: 'Cyber Attack on Power Grid Infrastructure', severity: 'high' as const, sentiment: 'escalation' as const, confidence: 91, region: 'Northern Europe', time: '31m ago', country: '🇪🇪' },
-  { id: '6', title: 'Peacekeeping Forces Deployment Approved', severity: 'medium' as const, sentiment: 'de-escalation' as const, confidence: 88, region: 'Sub-Saharan Africa', time: '45m ago', country: '🇨🇩' },
-  { id: '7', title: 'Cross-Border Artillery Exchange Reported', severity: 'high' as const, sentiment: 'escalation' as const, confidence: 69, region: 'South Asia', time: '1h ago', country: '🇵🇰' },
-  { id: '8', title: 'Economic Sanctions Package Announced', severity: 'medium' as const, sentiment: 'neutral' as const, confidence: 95, region: 'Global', time: '1h ago', country: '🇺🇸' },
+const MOCK_EVENTS: WatchEvent[] = [
+  {
+    id: '1',
+    title: 'Military Aircraft Detected in Restricted Airspace',
+    summary: 'Multiple fighter jets and surveillance aircraft detected operating near contested airspace. Increased military activity observed within 24 hours, with at least 12 sorties recorded by open-source tracking platforms. Regional air traffic control has issued NOTAMs for the affected zone.',
+    region: 'Middle East',
+    country: 'Iran',
+    countryCode: 'IR',
+    countryFlag: '🇮🇷',
+    lat: 32.4279,
+    lng: 53.6880,
+    severity: 'high',
+    sentiment: 'escalation',
+    confidence: 94,
+    category: 'Military',
+    sources: [
+      { name: 'Reuters', url: 'https://reuters.com', credibility: 95 },
+      { name: 'FlightRadar24', url: 'https://flightradar24.com', credibility: 88 },
+      { name: 'OSINT Aggregator', url: 'https://example.com', credibility: 72 },
+    ],
+    contradictions: 'Iranian state media denies any unusual military activity. Claims aircraft were conducting routine training exercises.',
+    activityCount24h: 47,
+    publishedAt: '2026-03-02T01:30:00Z',
+    timeAgo: '2m ago',
+  },
+  {
+    id: '2',
+    title: 'Ceasefire Agreement Signed in Eastern Region',
+    summary: 'Both parties have signed initial ceasefire terms following three weeks of intensive negotiations mediated by the UN Special Envoy. The agreement includes provisions for humanitarian corridors and prisoner exchanges within 72 hours.',
+    region: 'Eastern Europe',
+    country: 'Ukraine',
+    countryCode: 'UA',
+    countryFlag: '🇺🇦',
+    lat: 48.3794,
+    lng: 31.1656,
+    severity: 'low',
+    sentiment: 'de-escalation',
+    confidence: 87,
+    category: 'Diplomatic',
+    sources: [
+      { name: 'Associated Press', url: 'https://apnews.com', credibility: 96 },
+      { name: 'BBC News', url: 'https://bbc.com', credibility: 94 },
+    ],
+    activityCount24h: 23,
+    publishedAt: '2026-03-02T01:24:00Z',
+    timeAgo: '8m ago',
+  },
+  {
+    id: '3',
+    title: 'Naval Fleet Mobilization Detected via Satellite',
+    summary: 'Commercial satellite imagery reveals significant naval mobilization at multiple ports. At least 8 warships and 3 submarines have departed from home port, heading toward the contested maritime zone. This represents the largest naval deployment in the region in over 3 years.',
+    region: 'Asia-Pacific',
+    country: 'China',
+    countryCode: 'CN',
+    countryFlag: '🇨🇳',
+    lat: 35.8617,
+    lng: 104.1954,
+    severity: 'high',
+    sentiment: 'escalation',
+    confidence: 76,
+    category: 'Military',
+    sources: [
+      { name: 'Planet Labs', url: 'https://planet.com', credibility: 90 },
+      { name: 'Jane\'s Defence', url: 'https://janes.com', credibility: 92 },
+    ],
+    contradictions: 'Official Chinese military spokesperson stated all naval activities are part of pre-planned annual exercises.',
+    activityCount24h: 31,
+    publishedAt: '2026-03-02T01:17:00Z',
+    timeAgo: '15m ago',
+  },
+  {
+    id: '4',
+    title: 'Diplomatic Talks Resume After 6-Month Freeze',
+    summary: 'High-level diplomatic talks have resumed between the two nations after a 6-month communication freeze. The meeting, held at a neutral venue, focused on border dispute resolution and trade normalization. Both sides described the atmosphere as "constructive."',
+    region: 'East Asia',
+    country: 'South Korea',
+    countryCode: 'KR',
+    countryFlag: '🇰🇷',
+    lat: 35.9078,
+    lng: 127.7669,
+    severity: 'medium',
+    sentiment: 'de-escalation',
+    confidence: 82,
+    category: 'Diplomatic',
+    sources: [
+      { name: 'Yonhap News', url: 'https://en.yna.co.kr', credibility: 88 },
+      { name: 'NHK World', url: 'https://www3.nhk.or.jp', credibility: 91 },
+    ],
+    activityCount24h: 12,
+    publishedAt: '2026-03-02T01:09:00Z',
+    timeAgo: '23m ago',
+  },
+  {
+    id: '5',
+    title: 'Cyber Attack on Critical Power Grid Infrastructure',
+    summary: 'A sophisticated cyber attack has targeted power grid infrastructure across three Baltic states simultaneously. The attack caused brief service disruptions affecting approximately 2 million residents. Attribution analysis points to a state-sponsored APT group.',
+    region: 'Northern Europe',
+    country: 'Estonia',
+    countryCode: 'EE',
+    countryFlag: '🇪🇪',
+    lat: 58.5953,
+    lng: 25.0136,
+    severity: 'high',
+    sentiment: 'escalation',
+    confidence: 91,
+    category: 'Cyber',
+    sources: [
+      { name: 'CERT-EU', url: 'https://cert.europa.eu', credibility: 94 },
+      { name: 'Recorded Future', url: 'https://recordedfuture.com', credibility: 85 },
+      { name: 'Estonian CERT', url: 'https://cert.ee', credibility: 93 },
+    ],
+    activityCount24h: 58,
+    publishedAt: '2026-03-02T01:01:00Z',
+    timeAgo: '31m ago',
+  },
+  {
+    id: '6',
+    title: 'Peacekeeping Forces Deployment Approved by Security Council',
+    summary: 'The UN Security Council has approved the deployment of 5,000 peacekeeping forces to the conflict zone. The resolution passed with 14 votes in favor and 1 abstention. Forces are expected to begin deployment within 10 days.',
+    region: 'Sub-Saharan Africa',
+    country: 'Democratic Republic of Congo',
+    countryCode: 'CD',
+    countryFlag: '🇨🇩',
+    lat: -4.0383,
+    lng: 21.7587,
+    severity: 'medium',
+    sentiment: 'de-escalation',
+    confidence: 88,
+    category: 'Peacekeeping',
+    sources: [
+      { name: 'UN News', url: 'https://news.un.org', credibility: 97 },
+      { name: 'Al Jazeera', url: 'https://aljazeera.com', credibility: 82 },
+    ],
+    activityCount24h: 15,
+    publishedAt: '2026-03-02T00:47:00Z',
+    timeAgo: '45m ago',
+  },
+  {
+    id: '7',
+    title: 'Cross-Border Artillery Exchange Reported',
+    summary: 'Local sources report artillery exchanges along a disputed border region. At least 40 rounds were fired from both sides over a 3-hour period. No casualties have been confirmed, but civilian evacuations are underway in border villages.',
+    region: 'South Asia',
+    country: 'Pakistan',
+    countryCode: 'PK',
+    countryFlag: '🇵🇰',
+    lat: 30.3753,
+    lng: 69.3451,
+    severity: 'high',
+    sentiment: 'escalation',
+    confidence: 69,
+    category: 'Military',
+    sources: [
+      { name: 'Dawn News', url: 'https://dawn.com', credibility: 78 },
+      { name: 'NDTV', url: 'https://ndtv.com', credibility: 80 },
+    ],
+    contradictions: 'Both sides claim the other initiated the exchange. Pakistan military says it was "retaliatory fire" while the opposing side calls it "unprovoked aggression."',
+    activityCount24h: 34,
+    publishedAt: '2026-03-02T00:32:00Z',
+    timeAgo: '1h ago',
+  },
+  {
+    id: '8',
+    title: 'Economic Sanctions Package Announced Against Regional Power',
+    summary: 'A coalition of Western nations has announced a comprehensive sanctions package targeting key sectors including energy, finance, and technology exports. The package includes asset freezes on 47 individuals and 12 corporate entities.',
+    region: 'Global',
+    country: 'United States',
+    countryCode: 'US',
+    countryFlag: '🇺🇸',
+    lat: 38.9072,
+    lng: -77.0369,
+    severity: 'medium',
+    sentiment: 'neutral',
+    confidence: 95,
+    category: 'Economic',
+    sources: [
+      { name: 'US Treasury Dept', url: 'https://treasury.gov', credibility: 99 },
+      { name: 'Financial Times', url: 'https://ft.com', credibility: 93 },
+    ],
+    activityCount24h: 22,
+    publishedAt: '2026-03-02T00:32:00Z',
+    timeAgo: '1h ago',
+  },
 ]
 
 const MOCK_PREDICTIONS = [
@@ -40,7 +216,9 @@ const MOCK_KEYWORDS = [
   { rank: 5, keyword: 'Ceasefire', count: 1201 },
 ]
 
+// =============================================
 // App Component
+// =============================================
 
 function App() {
   return (
@@ -54,66 +232,16 @@ function App() {
       ticker={
         <NewsTicker items={MOCK_TICKER_ITEMS} speed={45} />
       }
-      leftPanel={<LeftPanel />}
+      leftPanel={<PulseFeed events={MOCK_EVENTS} />}
       centerPanel={<CenterPanel />}
       rightPanel={<RightPanel />}
     />
   )
 }
 
-// Left Panel — Pulse Feed
-
-function LeftPanel() {
-  return (
-    <div className="panel-left">
-      <div className="panel-left__header">
-        <h2 className="panel-title">Pulse Feed</h2>
-        <div className="panel-left__filters">
-          <button className="filter-tab filter-tab--active">All</button>
-          <button className="filter-tab">High</button>
-          <button className="filter-tab">24H</button>
-          <button className="filter-tab filter-tab--esc">Escalation</button>
-        </div>
-      </div>
-
-      <div className="panel-left__search">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <circle cx="11" cy="11" r="8" />
-          <line x1="21" y1="21" x2="16.65" y2="16.65" />
-        </svg>
-        <input type="text" placeholder="Search events..." className="search-input" />
-      </div>
-
-      <div className="panel-left__feed">
-        {MOCK_EVENTS.map((event) => (
-          <Card
-            key={event.id}
-            variant={event.sentiment === 'escalation' ? 'escalation' : event.sentiment === 'de-escalation' ? 'de-escalation' : 'default'}
-            hoverable
-            className="event-card"
-          >
-            <div className="event-card__top">
-              <Badge severity={event.severity} dot>{event.severity.toUpperCase()}</Badge>
-              <span className="event-card__time mono">{event.time}</span>
-            </div>
-            <div className="event-card__title">
-              <span className="event-card__flag">{event.country}</span>
-              {event.title}
-            </div>
-            <div className="event-card__meta">
-              <span className="text-muted">{event.region}</span>
-              <span className="mono" style={{ color: event.confidence >= 80 ? 'var(--signal-green)' : event.confidence >= 50 ? 'var(--signal-yellow)' : 'var(--signal-red)' }}>
-                {event.confidence}%
-              </span>
-            </div>
-          </Card>
-        ))}
-      </div>
-    </div>
-  )
-}
-
+// =============================================
 // Center Panel — Globe Placeholder
+// =============================================
 
 function CenterPanel() {
   return (
@@ -129,7 +257,6 @@ function CenterPanel() {
         </div>
       </div>
 
-      {/* Bottom tenstion index placeholder */}
       <div className="tension-bar">
         <div className="tension-bar__left">
           <span className="tension-bar__label">Global Tension Index</span>
@@ -150,7 +277,9 @@ function CenterPanel() {
   )
 }
 
+// =============================================
 // Right Panel — Predictions, Markets, Keywords
+// =============================================
 
 function RightPanel() {
   return (

@@ -89,15 +89,15 @@
 
 ### 1.2 Event Feed (Left Panel — "Pulse Feed")
 
-- [ ] Create **Event Card** component with:
+- [x] Create **Event Card** component with:
   - Title, Category Tag (HIGH/MEDIUM), Confidence %, Source, Timestamp, Country flag, Expand arrow
   - States: Default, Hover (border glow), Expanded (summary), Escalation (red), De-escalation (green)
-- [ ] Build **Pulse Feed** list with virtualized scrolling (performance)
-- [ ] Implement **Smart Digest** section (locked for free users)
-- [ ] Build **filtering system**:
+- [x] Build **Pulse Feed** list with virtualized scrolling (performance)
+- [x] Implement **Smart Digest** section (locked for free users)
+- [x] Build **filtering system**:
   - Tabs: High, Medium, 24H, Escalation, De-escalation
   - Search bar with keyword + country filtering
-- [ ] Create **Event Detail Modal** (overlay):
+- [x] Create **Event Detail Modal** (overlay):
   - Header: Country, Close button, Title
   - Metadata: Severity, Sentiment, Confidence %, Published timestamp, Region, 24H Activity
   - Summary paragraph
