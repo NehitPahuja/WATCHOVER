@@ -29,8 +29,8 @@
   - `d3` (for micro-charts)
   - `@tanstack/react-query`
   - `sentry/react`
-- [ ] Configure **Vite PWA plugin** (`vite-plugin-pwa`) for offline support
-- [ ] Set up **Playwright** for e2e testing
+- [x] Configure **Vite PWA plugin** (`vite-plugin-pwa`) for offline support
+- [x] Set up **Playwright** for e2e testing
 
 ### 0.2 Design System Implementation
 
@@ -41,7 +41,7 @@
   - Signal colors: Red `#FF3B3B`, Green `#00FF85`, Yellow `#FFC857`, Blue `#2CA8FF`
   - Typography scale: H1 (28–32px), H2 (22px), Body (14–16px), Micro (12px)
   - Borders: 1px subtle, low glow on hover, soft drop shadows
-- [ ] Build reusable **base components**:
+- [x] Build reusable **base components**:
   - `<Button>` (primary, ghost, CTA variants)
   - `<Badge>` (severity: HIGH/MEDIUM/LOW with signal colors)
   - `<Card>` (with hover glow border effect)

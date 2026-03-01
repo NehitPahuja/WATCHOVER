@@ -1,0 +1,51 @@
+/* =============================================
+   Card Component Styles
+   ============================================= */
+
+.wo-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  transition: all var(--transition-base);
+  position: relative;
+}
+
+/* ---- Hoverable ---- */
+.wo-card--hoverable {
+  cursor: pointer;
+}
+
+.wo-card--hoverable:hover {
+  border-color: var(--border-hover);
+  background: var(--bg-hover);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.03);
+}
+
+/* ---- Escalation Variant ---- */
+.wo-card--escalation {
+  border-left: 3px solid var(--signal-red);
+}
+
+.wo-card--escalation:hover {
+  border-color: var(--signal-red);
+  border-left-width: 3px;
+  box-shadow: var(--glow-red);
+}
+
+/* ---- De-escalation Variant ---- */
+.wo-card--de-escalation {
+  border-left: 3px solid var(--signal-green);
+}
+
+.wo-card--de-escalation:hover {
+  border-color: var(--signal-green);
+  border-left-width: 3px;
+  box-shadow: var(--glow-green);
+}
+
+/* ---- Focus ---- */
+.wo-card:focus-visible {
+  outline: 2px solid var(--signal-blue);
+  outline-offset: 2px;
+}

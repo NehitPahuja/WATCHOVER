@@ -1,0 +1,78 @@
+/* =============================================
+   Badge Component Styles
+   ============================================= */
+
+.wo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+/* ---- Sizes ---- */
+.wo-badge--sm {
+  font-size: 10px;
+  padding: 2px 7px;
+}
+
+.wo-badge--md {
+  font-size: var(--text-micro);
+  padding: 3px 10px;
+}
+
+/* ---- Variants ---- */
+.wo-badge--high {
+  background: var(--signal-red-dim);
+  border-color: rgba(255, 59, 59, 0.3);
+  color: var(--signal-red);
+}
+
+.wo-badge--medium {
+  background: var(--signal-yellow-dim);
+  border-color: rgba(255, 200, 87, 0.3);
+  color: var(--signal-yellow);
+}
+
+.wo-badge--low {
+  background: var(--signal-green-dim);
+  border-color: rgba(0, 255, 133, 0.3);
+  color: var(--signal-green);
+}
+
+.wo-badge--info {
+  background: var(--signal-blue-dim);
+  border-color: rgba(44, 168, 255, 0.3);
+  color: var(--signal-blue);
+}
+
+.wo-badge--escalation {
+  background: var(--signal-red-dim);
+  border-color: rgba(255, 59, 59, 0.4);
+  color: var(--signal-red);
+}
+
+.wo-badge--de-escalation {
+  background: var(--signal-green-dim);
+  border-color: rgba(0, 255, 133, 0.4);
+  color: var(--signal-green);
+}
+
+/* ---- Dot ---- */
+.wo-badge__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: badge-dot-pulse 2s ease-in-out infinite;
+}
+
+@keyframes badge-dot-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}

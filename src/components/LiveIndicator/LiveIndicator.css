@@ -1,0 +1,76 @@
+/* =============================================
+   LiveIndicator Component Styles
+   ============================================= */
+
+.wo-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ---- Sizes ---- */
+.wo-live--sm .wo-live__dot {
+  width: 8px;
+  height: 8px;
+}
+
+.wo-live--sm .wo-live__label {
+  font-size: 10px;
+}
+
+.wo-live--md .wo-live__dot {
+  width: 10px;
+  height: 10px;
+}
+
+.wo-live--md .wo-live__label {
+  font-size: var(--text-micro);
+}
+
+/* ---- Dot ---- */
+.wo-live__dot {
+  position: relative;
+  display: inline-block;
+  background: var(--signal-green);
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(0, 255, 133, 0.5);
+  animation: live-dot-pulse 2s ease-in-out infinite;
+}
+
+@keyframes live-dot-pulse {
+  0%, 100% {
+    box-shadow: 0 0 4px rgba(0, 255, 133, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 12px rgba(0, 255, 133, 0.9);
+  }
+}
+
+/* ---- Expanding Ring ---- */
+.wo-live__dot-ring {
+  position: absolute;
+  inset: -3px;
+  border: 1.5px solid var(--signal-green);
+  border-radius: 50%;
+  animation: live-ring-expand 2s ease-out infinite;
+}
+
+@keyframes live-ring-expand {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+/* ---- Label ---- */
+.wo-live__label {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--signal-green);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}

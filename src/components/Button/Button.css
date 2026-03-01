@@ -1,0 +1,136 @@
+/* =============================================
+   Button Component Styles
+   ============================================= */
+
+.wo-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-family: var(--font-primary);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.01em;
+}
+
+.wo-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.wo-btn:focus-visible {
+  outline: 2px solid var(--signal-blue);
+  outline-offset: 2px;
+}
+
+/* ---- Sizes ---- */
+.wo-btn--sm {
+  padding: 6px 12px;
+  font-size: var(--text-micro);
+  height: 30px;
+}
+
+.wo-btn--md {
+  padding: 8px 18px;
+  font-size: var(--text-small);
+  height: 36px;
+}
+
+.wo-btn--lg {
+  padding: 10px 24px;
+  font-size: var(--text-body);
+  height: 44px;
+}
+
+/* ---- Variants ---- */
+
+/* Primary */
+.wo-btn--primary {
+  background: var(--bg-tertiary);
+  border-color: var(--border-light);
+  color: var(--text-primary);
+}
+
+.wo-btn--primary:hover:not(:disabled) {
+  background: var(--bg-hover);
+  border-color: var(--border-hover);
+}
+
+.wo-btn--primary:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+/* Ghost */
+.wo-btn--ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-secondary);
+}
+
+.wo-btn--ghost:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+}
+
+/* CTA */
+.wo-btn--cta {
+  background: linear-gradient(135deg, var(--signal-red), #cc2f2f);
+  border-color: rgba(255, 59, 59, 0.3);
+  color: var(--text-primary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: var(--text-micro);
+}
+
+.wo-btn--cta:hover:not(:disabled) {
+  box-shadow: var(--glow-red);
+  border-color: rgba(255, 59, 59, 0.5);
+}
+
+.wo-btn--cta:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+/* Danger */
+.wo-btn--danger {
+  background: var(--signal-red-dim);
+  border-color: rgba(255, 59, 59, 0.3);
+  color: var(--signal-red);
+}
+
+.wo-btn--danger:hover:not(:disabled) {
+  background: rgba(255, 59, 59, 0.25);
+  border-color: rgba(255, 59, 59, 0.5);
+}
+
+/* ---- Loading Spinner ---- */
+.wo-btn--loading {
+  cursor: wait;
+}
+
+.wo-btn__spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-top-color: var(--text-primary);
+  border-radius: 50%;
+  animation: btn-spin 0.6s linear infinite;
+}
+
+@keyframes btn-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ---- Icon ---- */
+.wo-btn__icon {
+  display: inline-flex;
+  align-items: center;
+  font-size: 1.1em;
+}
