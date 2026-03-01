@@ -3,18 +3,30 @@ import Map from 'react-map-gl/maplibre'
 import DeckGL from '@deck.gl/react'
 import { ScatterplotLayer } from '@deck.gl/layers'
 import { HeatmapLayer } from '@deck.gl/aggregation-layers'
-import type { MapViewState } from '@deck.gl/core'
+import { _GlobeView as GlobeView, type MapViewState } from '@deck.gl/core'
 import type { WatchEvent } from '../../types'
 import { Badge } from '../Badge'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import './InteractiveGlobe.css'
 
-// We need a dark map style. We can use a free Carto dark matter basemap.
+// =============================================
+// Constants & Config
+// = :============================================
+
+// High-fidelity dark tactical map style (using Carto Dark Matter)
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json'
+
+const INITIAL_VIEW_STATE: MapViewState = {
+  longitude: 25,
+  latitude: 20,
+  zoom: 1.5,
+  pitch: 0,
+  bearing: 0,
+}
 
 // =============================================
 // Interfaces
-// =============================================
+// = :============================================
 
 interface InteractiveGlobeProps {
   events: WatchEvent[]
@@ -26,14 +38,6 @@ interface TooltipInfo {
   x: number
   y: number
   object: WatchEvent | null
-}
-
-const INITIAL_VIEW_STATE: MapViewState = {
-  longitude: 40,
-  latitude: 35,
-  zoom: 2.5,
-  pitch: 30,
-  bearing: 0,
 }
 
 // =============================================
@@ -48,11 +52,11 @@ const InteractiveGlobe: React.FC<InteractiveGlobeProps> = ({
   const [viewState, setViewState] = useState(INITIAL_VIEW_STATE)
   const [hoverInfo, setHoverInfo] = useState<TooltipInfo>({ x: 0, y: 0, object: null })
 
-  // Auto-rotation effect
+  // Auto-rotation effect (longitude based for globe)
   useEffect(() => {
     let animationId: number
     let lastTime = Date.now()
-    const ROTATION_SPEED = 0.5 // degrees per second
+    const ROTATION_SPEED = 0.8 // degrees per second
 
     const rotate = () => {
       const now = Date.now()
@@ -61,12 +65,12 @@ const InteractiveGlobe: React.FC<InteractiveGlobeProps> = ({
 
       setViewState((vs) => ({
         ...vs,
-        bearing: (vs.bearing || 0) + ROTATION_SPEED * dt
+        longitude: (vs.longitude || 0) + ROTATION_SPEED * dt
       }))
       animationId = requestAnimationFrame(rotate)
     }
 
-    // Only rotate if no hovering
+    // Auto-rotate only if we aren't currently hovering an object
     if (!hoverInfo.object) {
       animationId = requestAnimationFrame(rotate)
     }
@@ -74,74 +78,72 @@ const InteractiveGlobe: React.FC<InteractiveGlobeProps> = ({
     return () => cancelAnimationFrame(animationId)
   }, [hoverInfo.object])
 
-
   // =============================================
-  // Layers
+  // Layers Configuration
   // =============================================
 
   const layers = useMemo(() => {
-    // 1. Scatterplot Layer for exact event locations (Pulse nodes)
+    // 1. Scatterplot Layer for events
     const scatterLayer = new ScatterplotLayer<WatchEvent>({
       id: 'event-scatter',
       data: events.filter(e => e.lat != null && e.lng != null),
-      getPosition: d => [d.lng, d.lat],
+      getPosition: d => [d.lng!, d.lat!],
       getFillColor: d => {
-        if (d.sentiment === 'escalation') return [255, 59, 59, 200] // Red
-        if (d.sentiment === 'de-escalation') return [0, 255, 133, 200] // Green
-        return [255, 200, 87, 200] // Yellow
+        if (d.sentiment === 'escalation') return [255, 30, 30, 200]
+        if (d.sentiment === 'de-escalation') return [0, 255, 133, 200]
+        return [255, 200, 87, 200]
       },
       getLineColor: d => {
-        if (d.sentiment === 'escalation') return [255, 59, 59, 255]
+        if (d.sentiment === 'escalation') return [255, 30, 30, 255]
         if (d.sentiment === 'de-escalation') return [0, 255, 133, 255]
         return [255, 200, 87, 255]
       },
-      getRadius: d => viewState.zoom < 3 ? Math.max(d.confidence * 400, 20000) : Math.max(d.confidence * 200, 10000), // Scale by confidence and zoom
+      // Scale markers based on zoom Level for globe projection
+      getRadius: d => {
+        const baseRadius = 50000; // 50km base pulse
+        const zoomFactor = Math.pow(1.5, -(viewState.zoom || 0));
+        return baseRadius * zoomFactor * (d.confidence / 50);
+      },
       radiusUnits: 'meters',
-      radiusMinPixels: 4,
+      radiusMinPixels: 3,
       radiusMaxPixels: 20,
-      lineWidthMinPixels: 1,
       stroked: true,
       filled: true,
       pickable: true,
       autoHighlight: true,
-      highlightColor: [255, 255, 255, 200],
+      highlightColor: [255, 255, 255, 100],
       onClick: ({ object }) => object && onEventClick?.(object),
       onHover: info => setHoverInfo({
         x: info.x,
         y: info.y,
-        object: info.object as WatchEvent || null
+        object: (info.object as WatchEvent) || null
       }),
-      parameters: { depthTest: false } as any // ensure dots show above terrain
+      parameters: {
+        depthTest: true
+      } as any
     })
 
-    // 2. Optional Heatmap for density
+    // 2. Optional Heatmap Layer for density
     const heatmapLayer = new HeatmapLayer<WatchEvent>({
       id: 'event-heatmap',
       data: events.filter(e => e.lat != null && e.lng != null),
-      getPosition: d => [d.lng, d.lat],
-      getWeight: d => {
-        // Higher weight for escalation/critical
-        let weight = 1
-        if (d.severity === 'critical') weight += 3
-        if (d.severity === 'high') weight += 2
-        if (d.sentiment === 'escalation') weight += 2
-        return weight
-      },
-      radiusPixels: 40,
-      intensity: 1,
+      getPosition: d => [d.lng!, d.lat!],
+      getWeight: d => (d.severity === 'critical' ? 5 : d.severity === 'high' ? 3 : 1),
+      radiusPixels: 45,
+      intensity: 1.5,
       threshold: 0.1,
       colorRange: [
         [10, 10, 10, 0],
-        [44, 168, 255, 120],  // Blue
-        [255, 200, 87, 180], // Yellow
-        [255, 59, 59, 230],  // Red
+        [44, 168, 255, 80],
+        [255, 200, 87, 150],
+        [255, 30, 30, 200],
       ],
-      visible: showHeatmap || viewState.zoom < 4 // Progressive disclosure: show heatmap at low zoom
+      visible: showHeatmap || (viewState.zoom || 0) < 3.5
     })
 
     return [
-      showHeatmap || viewState.zoom < 4 ? heatmapLayer : null,
-      viewState.zoom >= 2 ? scatterLayer : null // Only show distinct scatter markers if zoom >= 2
+      showHeatmap || (viewState.zoom || 0) < 3.5 ? heatmapLayer : null,
+      (viewState.zoom || 0) >= 1.5 ? scatterLayer : null
     ].filter(Boolean)
   }, [events, onEventClick, showHeatmap, viewState.zoom])
 
@@ -152,22 +154,24 @@ const InteractiveGlobe: React.FC<InteractiveGlobeProps> = ({
   return (
     <div className="wo-globe-container">
       <DeckGL
+        views={new GlobeView({ id: 'globe', controller: true, resolution: 1 })}
         layers={layers}
         viewState={viewState}
         onViewStateChange={({ viewState }) => setViewState(viewState as MapViewState)}
-        controller={true}
         getCursor={({ isDragging }) => (isDragging ? 'grabbing' : hoverInfo.object ? 'pointer' : 'grab')}
       >
         <Map
           mapStyle={MAP_STYLE}
           reuseMaps
+          // @ts-ignore - MapLibre globe property
+          projection="globe"
         >
-          {/* Subtle global atmosphere/vignette overlay */}
-          <div className="wo-globe-vignette" />
+          {/* Surface atmosphere glow wrapper */}
+          <div className="wo-globe-atmosphere" />
         </Map>
       </DeckGL>
 
-      {/* Hover Tooltip Placeholder */}
+      {/* Interactive Tooltip */}
       {hoverInfo.object && (
         <div
           className="wo-globe-tooltip"
@@ -190,19 +194,19 @@ const InteractiveGlobe: React.FC<InteractiveGlobeProps> = ({
         </div>
       )}
 
-      {/* Loading overlay if no events (optional fallback) */}
+      {/* Loading Overlay */}
       {events.length === 0 && (
          <div className="wo-globe-loading">
             <span className="wo-globe-spinner" />
-            Initializing Geo-Telemetry...
+            Synchronizing Global Intel...
          </div>
       )}
 
-      {/* Military Aircraft Counter Overlay */}
+      {/* Aircraft Counter Overlay */}
       <div className="wo-aircraft-counter">
         <span className="wo-aircraft-counter__dot" />
-        <span className="wo-aircraft-counter__count mono">847</span>
-        <span className="wo-aircraft-counter__label">Active Sorties Tracked</span>
+        <span className="wo-aircraft-counter__count mono">1,128</span>
+        <span className="wo-aircraft-counter__label">Militarized Sorties Detected</span>
       </div>
     </div>
   )

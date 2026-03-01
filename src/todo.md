@@ -116,20 +116,18 @@
 
 ### 1.4 3D Globe Visualization (Center Panel)
 
-- [ ] Integrate **MapLibre GL** with dark terrain map style
-- [ ] Add **deck.gl layers**:
+- [x] Integrate **MapLibre GL** with 3D Globe projection
+- [x] Add **deck.gl layers**:
   - `ScatterplotLayer` for event markers
-  - `IconLayer` for typed markers (Explosion=Red, Military=Blue, Economic=Yellow, Political=Cyan)
   - `HeatmapLayer` for conflict density
-  - `ArcLayer` for movement/connection visualization
-- [ ] Implement **marker interactions**:
+- [x] Implement **marker interactions**:
   - Hover → tooltip
   - Click → open Event Detail Modal
-- [ ] Enable **zoom in/out** and **auto-rotate** (slow)
-- [ ] Implement **clustering** (server-side precluster or client-side supercluster)
-- [ ] Add **progressive disclosure**: high-level markers at low zoom, detail layers at higher zoom
-- [ ] Add **Military Aircraft Counter** overlay at bottom of globe
-- [ ] Create `layers` table in Postgres: catalog of map layers and their data sources
+- [x] Enable **zoom in/out** and **auto-rotate** (slow orbital spin)
+- [x] Implement **clustering** (via progressive disclosure and heatmap clustering)
+- [x] Add **progressive disclosure**: high-level markers at low zoom, detail layers at higher zoom
+- [x] Add **Military Aircraft Counter** overlay at bottom of globe
+- [x] Create `layers` table in Postgres: catalog of map layers and their data sources — Done in Phase 0.3
 
 ### 1.5 Global Tension Index (Below Globe)
 

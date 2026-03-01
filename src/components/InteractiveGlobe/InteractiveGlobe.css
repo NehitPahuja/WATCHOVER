@@ -7,8 +7,17 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  background: #050505; /* Deep dark base */
+  background: radial-gradient(circle at center, #0a0c10 0%, #050505 100%); /* Space-like radial gradient */
   overflow: hidden;
+}
+
+/* Atmosphere glow effect */
+.wo-globe-atmosphere {
+  position: absolute;
+  pointer-events: none;
+  inset: 0;
+  z-index: 1;
+  box-shadow: inset 0 0 150px rgba(44, 168, 255, 0.05); /* Subtle inner glow */
 }
 
 /* Make sure deck.gl canvas takes full space */
