@@ -21,5 +21,6 @@ export { MarketsModule } from './MarketsModule'
 export type { MarketEntry } from './MarketsModule'
 export { KeywordsModule } from './KeywordsModule'
 export type { KeywordEntry } from './KeywordsModule'
+export { AnimatedCounter } from './AnimatedCounter'
 
 

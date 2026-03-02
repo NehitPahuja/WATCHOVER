@@ -1,0 +1,80 @@
+/* =============================================
+   AnimatedCounter — Flash & Tick Animation
+   ============================================= */
+
+.wo-animated-counter {
+  display: inline-block;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+  position: relative;
+}
+
+.wo-animated-counter--flash {
+  animation: counter-flash 0.4s ease-out;
+}
+
+@keyframes counter-flash {
+  0% {
+    text-shadow:
+      0 0 8px rgba(0, 255, 133, 0.8),
+      0 0 16px rgba(0, 255, 133, 0.4);
+    transform: scale(1.08);
+  }
+  50% {
+    text-shadow:
+      0 0 4px rgba(0, 255, 133, 0.5),
+      0 0 8px rgba(0, 255, 133, 0.2);
+    transform: scale(1.03);
+  }
+  100% {
+    text-shadow: none;
+    transform: scale(1);
+  }
+}
+
+/* Variant: red flash for counting up conflict/tension numbers */
+.wo-animated-counter--red.wo-animated-counter--flash {
+  animation: counter-flash-red 0.4s ease-out;
+}
+
+@keyframes counter-flash-red {
+  0% {
+    text-shadow:
+      0 0 8px rgba(255, 30, 30, 0.8),
+      0 0 16px rgba(255, 30, 30, 0.4);
+    transform: scale(1.08);
+  }
+  50% {
+    text-shadow:
+      0 0 4px rgba(255, 30, 30, 0.5),
+      0 0 8px rgba(255, 30, 30, 0.2);
+    transform: scale(1.03);
+  }
+  100% {
+    text-shadow: none;
+    transform: scale(1);
+  }
+}
+
+/* Variant: yellow flash for tension numbers */
+.wo-animated-counter--yellow.wo-animated-counter--flash {
+  animation: counter-flash-yellow 0.4s ease-out;
+}
+
+@keyframes counter-flash-yellow {
+  0% {
+    text-shadow:
+      0 0 8px rgba(255, 200, 87, 0.8),
+      0 0 16px rgba(255, 200, 87, 0.4);
+    transform: scale(1.08);
+  }
+  50% {
+    text-shadow:
+      0 0 4px rgba(255, 200, 87, 0.5),
+      0 0 8px rgba(255, 200, 87, 0.2);
+    transform: scale(1.03);
+  }
+  100% {
+    text-shadow: none;
+    transform: scale(1);
+  }
+}

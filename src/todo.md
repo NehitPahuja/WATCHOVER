@@ -197,19 +197,19 @@
 
 ### 3.2 Ingestion Workers
 
-- [ ] Build **RSS/News polling** worker
-- [ ] Build curated **API connectors** (conflict data sources)
-- [ ] (Optional) Build **Telegram/OSINT** channel pollers
-- [ ] Implement **event deduplication** logic
-- [ ] Fan-out ingested events to relay → subscribers
+- [x] Build **RSS/News polling** worker
+- [x] Build curated **API connectors** (conflict data sources)
+- [x] (Optional) Build **Telegram/OSINT** channel pollers
+- [x] Implement **event deduplication** logic
+- [x] Fan-out ingested events to relay → subscribers
 
 ### 3.3 Frontend Realtime Integration
 
-- [ ] Connect React app to WebSocket relay (`wss://relay.watchover.app`)
-- [ ] Update Pulse Feed in real-time on `events:new`
-- [ ] Update globe markers in real-time
-- [ ] Update counters (Active Conflicts, Tensions, Aircraft) with **increment animations**
-- [ ] Update prediction probabilities live
+- [x] Connect React app to WebSocket relay (`wss://relay.watchover.app`)
+- [x] Update Pulse Feed in real-time on `events:new`
+- [x] Update globe markers in real-time
+- [x] Update counters (Active Conflicts, Tensions, Aircraft) with **increment animations**
+- [x] Update prediction probabilities live
 
 ---
 

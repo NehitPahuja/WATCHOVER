@@ -1,7 +1,9 @@
 import { Routes, Route, useNavigate } from 'react-router-dom'
+import { useMemo } from 'react'
 import { DashboardLayout, Navbar, NewsTicker, PulseFeed, InteractiveGlobe, TensionChart, MOCK_TENSION_DATA, PredictionCard, MarketsModule, KeywordsModule } from './components'
 import type { TickerItem, Prediction, MarketEntry, KeywordEntry } from './components'
 import type { WatchEvent } from './types'
+import { useRealtimeDashboard } from './hooks'
 import { PredictionsPage } from './pages/PredictionsPage'
 import './App.css'
 
@@ -231,19 +233,49 @@ const MOCK_KEYWORDS: KeywordEntry[] = [
 // =============================================
 
 function Dashboard() {
+  // ---- Realtime Integration ----
+  const {
+    counters,
+    realtimeEvents,
+    unreadCount,
+    markAllRead,
+  } = useRealtimeDashboard({
+    activeConflicts: 14,
+    tensions: 23,
+    aircraft: 1128,
+    ships: 342,
+  })
+
+  // Merge realtime events with mock data (realtime first)
+  const allEvents = useMemo(() => {
+    const existingIds = new Set(MOCK_EVENTS.map(e => e.id))
+    const newEvents = realtimeEvents.filter(e => !existingIds.has(e.id))
+    return [...newEvents, ...MOCK_EVENTS]
+  }, [realtimeEvents])
+
   return (
     <DashboardLayout
       navbar={
         <Navbar
-          activeConflicts={14}
-          tensions={23}
+          activeConflicts={counters.activeConflicts}
+          tensions={counters.tensions}
         />
       }
       ticker={
         <NewsTicker items={MOCK_TICKER_ITEMS} speed={45} />
       }
-      leftPanel={<PulseFeed events={MOCK_EVENTS} />}
-      centerPanel={<CenterPanel />}
+      leftPanel={
+        <>
+          {unreadCount > 0 && (
+            <div className="realtime-banner" onClick={markAllRead}>
+              <span className="realtime-banner__dot" />
+              {unreadCount} new event{unreadCount > 1 ? 's' : ''} — click to mark read
+            </div>
+          )}
+          <PulseFeed events={allEvents} />
+        </>
+      }
+      centerPanel={<CenterPanel events={allEvents} aircraft={counters.aircraft} />}
       rightPanel={<RightPanel />}
     />
   )
@@ -263,11 +295,11 @@ function App() {
 // Center Panel — Globe Placeholder
 // =============================================
 
-function CenterPanel() {
+function CenterPanel({ events, aircraft }: { events: WatchEvent[]; aircraft: number }) {
   return (
     <div className="panel-center">
       <div className="globe-placeholder">
-        <InteractiveGlobe events={MOCK_EVENTS} showHeatmap={false} />
+        <InteractiveGlobe events={events} showHeatmap={false} aircraft={aircraft} />
       </div>
 
       <TensionChart

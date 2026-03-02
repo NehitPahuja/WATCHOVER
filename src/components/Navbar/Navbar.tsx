@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { LiveIndicator } from '../LiveIndicator'
+import { AnimatedCounter } from '../AnimatedCounter'
 import { Button } from '../Button'
 import './Navbar.css'
 
@@ -35,11 +36,19 @@ const Navbar: React.FC<NavbarProps> = ({
 
         <div className="wo-navbar__counters">
           <div className="wo-navbar__counter">
-            <span className="wo-navbar__counter-value mono text-red">{activeConflicts}</span>
+            <AnimatedCounter
+              value={activeConflicts}
+              className="wo-navbar__counter-value mono text-red wo-animated-counter--red"
+              duration={800}
+            />
             <span className="wo-navbar__counter-label">Active Conflicts</span>
           </div>
           <div className="wo-navbar__counter">
-            <span className="wo-navbar__counter-value mono text-yellow">{tensions}</span>
+            <AnimatedCounter
+              value={tensions}
+              className="wo-navbar__counter-value mono text-yellow wo-animated-counter--yellow"
+              duration={800}
+            />
             <span className="wo-navbar__counter-label">Tensions</span>
           </div>
         </div>

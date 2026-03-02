@@ -12,7 +12,9 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "relay:dev": "npx tsx server/relay/server.ts",
-    "db:seed-predictions": "npx tsx server/scripts/seed-predictions.ts"
+    "db:seed-predictions": "npx tsx server/scripts/seed-predictions.ts",
+    "ingest:rss": "npx tsx server/ingestion/rss-worker.ts",
+    "ingest:connectors": "npx tsx server/ingestion/connectors.ts"
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.61.3",

@@ -308,3 +308,59 @@
 .keyword-row__count {
   font-size: var(--text-micro);
 }
+
+/* =============================================
+   REALTIME BANNER — New events notification
+   ============================================= */
+
+.realtime-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  margin: 0 0 4px 0;
+  background: linear-gradient(90deg,
+    rgba(0, 255, 133, 0.12) 0%,
+    rgba(0, 255, 133, 0.04) 100%
+  );
+  border: 1px solid rgba(0, 255, 133, 0.25);
+  border-radius: 6px;
+  font-size: var(--text-micro);
+  font-family: var(--font-mono);
+  color: var(--green);
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+  animation: realtime-banner-slide 0.3s ease-out;
+}
+
+.realtime-banner:hover {
+  background: linear-gradient(90deg,
+    rgba(0, 255, 133, 0.18) 0%,
+    rgba(0, 255, 133, 0.08) 100%
+  );
+  border-color: rgba(0, 255, 133, 0.4);
+}
+
+.realtime-banner__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}
+
+@keyframes realtime-banner-slide {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}

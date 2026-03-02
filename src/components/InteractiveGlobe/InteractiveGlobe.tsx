@@ -6,6 +6,7 @@ import { HeatmapLayer } from '@deck.gl/aggregation-layers'
 import { _GlobeView as GlobeView, type MapViewState } from '@deck.gl/core'
 import type { WatchEvent } from '../../types'
 import { Badge } from '../Badge'
+import { AnimatedCounter } from '../AnimatedCounter'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import './InteractiveGlobe.css'
 
@@ -32,6 +33,7 @@ interface InteractiveGlobeProps {
   events: WatchEvent[]
   onEventClick?: (event: WatchEvent) => void
   showHeatmap?: boolean
+  aircraft?: number
 }
 
 interface TooltipInfo {
@@ -48,6 +50,7 @@ const InteractiveGlobe: React.FC<InteractiveGlobeProps> = ({
   events,
   onEventClick,
   showHeatmap = false,
+  aircraft = 1128,
 }) => {
   const [viewState, setViewState] = useState(INITIAL_VIEW_STATE)
   const [hoverInfo, setHoverInfo] = useState<TooltipInfo>({ x: 0, y: 0, object: null })
@@ -205,7 +208,11 @@ const InteractiveGlobe: React.FC<InteractiveGlobeProps> = ({
       {/* Aircraft Counter Overlay */}
       <div className="wo-aircraft-counter">
         <span className="wo-aircraft-counter__dot" />
-        <span className="wo-aircraft-counter__count mono">1,128</span>
+        <AnimatedCounter
+          value={aircraft}
+          className="wo-aircraft-counter__count mono"
+          duration={800}
+        />
         <span className="wo-aircraft-counter__label">Militarized Sorties Detected</span>
       </div>
     </div>
