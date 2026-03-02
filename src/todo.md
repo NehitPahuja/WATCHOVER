@@ -159,7 +159,7 @@
 
 ### 2.1 Predictions Full Page
 
-- [ ] Create **Predictions page** layout:
+- [x] Create **Predictions page** layout:
   - Header: Title, Description, Active/Resolved tabs, Vote count, Countdown
   - Probability time-series chart (green for YES, thin axis grid, smooth animation)
   - Yes/No probability bar

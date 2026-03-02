@@ -1,6 +1,8 @@
+import { Routes, Route, useNavigate } from 'react-router-dom'
 import { DashboardLayout, Navbar, NewsTicker, PulseFeed, InteractiveGlobe, TensionChart, MOCK_TENSION_DATA, PredictionCard, MarketsModule, KeywordsModule } from './components'
 import type { TickerItem, Prediction, MarketEntry, KeywordEntry } from './components'
 import type { WatchEvent } from './types'
+import { PredictionsPage } from './pages/PredictionsPage'
 import './App.css'
 
 // =============================================
@@ -228,7 +230,7 @@ const MOCK_KEYWORDS: KeywordEntry[] = [
 // App Component
 // =============================================
 
-function App() {
+function Dashboard() {
   return (
     <DashboardLayout
       navbar={
@@ -244,6 +246,16 @@ function App() {
       centerPanel={<CenterPanel />}
       rightPanel={<RightPanel />}
     />
+  )
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Dashboard />} />
+      <Route path="/predictions" element={<PredictionsPage />} />
+      <Route path="/predictions/:id" element={<PredictionsPage />} />
+    </Routes>
   )
 }
 
@@ -272,6 +284,8 @@ function CenterPanel() {
 // =============================================
 
 function RightPanel() {
+  const navigate = useNavigate()
+
   return (
     <div className="panel-right">
       {/* Predictions */}
@@ -281,7 +295,7 @@ function RightPanel() {
           <PredictionCard
             key={pred.id}
             prediction={pred}
-            onClick={(p) => console.log('View prediction:', p.id)}
+            onClick={(p) => navigate(`/predictions/${p.id}`)}
           />
         ))}
       </section>

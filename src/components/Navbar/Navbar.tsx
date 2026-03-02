@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { LiveIndicator } from '../LiveIndicator'
 import { Button } from '../Button'
 import './Navbar.css'
@@ -7,7 +8,6 @@ interface NavbarProps {
   activeConflicts?: number
   tensions?: number
   onLiveViewClick?: () => void
-  onPredictionsClick?: () => void
   onSubscribeClick?: () => void
   onSignInClick?: () => void
 }
@@ -16,11 +16,11 @@ const Navbar: React.FC<NavbarProps> = ({
   activeConflicts = 0,
   tensions = 0,
   onLiveViewClick,
-  onPredictionsClick,
   onSubscribeClick,
   onSignInClick,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const navigate = useNavigate()
 
   return (
     <nav className="wo-navbar" id="navbar">
@@ -54,7 +54,7 @@ const Navbar: React.FC<NavbarProps> = ({
         <Button variant="ghost" size="sm" onClick={onLiveViewClick}>
           Live View
         </Button>
-        <Button variant="ghost" size="sm" onClick={onPredictionsClick}>
+        <Button variant="ghost" size="sm" onClick={() => navigate('/predictions')}>
           Predictions
         </Button>
         <Button variant="cta" size="sm" onClick={onSubscribeClick}>
