@@ -1,4 +1,4 @@
-import { DashboardLayout, Navbar, NewsTicker, Badge, PulseFeed, InteractiveGlobe } from './components'
+import { DashboardLayout, Navbar, NewsTicker, Badge, PulseFeed, InteractiveGlobe, TensionChart, MOCK_TENSION_DATA } from './components'
 import type { TickerItem } from './components'
 import type { WatchEvent } from './types'
 import './App.css'
@@ -250,22 +250,11 @@ function CenterPanel() {
         <InteractiveGlobe events={MOCK_EVENTS} showHeatmap={false} />
       </div>
 
-      <div className="tension-bar">
-        <div className="tension-bar__left">
-          <span className="tension-bar__label">Global Tension Index</span>
-          <span className="tension-bar__value mono text-red">67.4</span>
-          <span className="tension-bar__delta mono text-red">▲ 2.3%</span>
-        </div>
-        <div className="tension-bar__right">
-          <span className="tension-bar__counter">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M22 2L11 13" /><path d="M22 2L15 22L11 13L2 9L22 2Z" />
-            </svg>
-            <span className="mono">847</span>
-            <span className="text-muted">Aircraft</span>
-          </span>
-        </div>
-      </div>
+      <TensionChart
+        dataPoints={MOCK_TENSION_DATA}
+        currentValue={67.4}
+        change={2.3}
+      />
     </div>
   )
 }

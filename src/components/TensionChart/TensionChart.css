@@ -1,0 +1,158 @@
+/* =============================================
+   TensionChart — Global Tension Index Bar
+   Below-globe strip with stats + D3 sparkline
+   ============================================= */
+
+.wo-tension {
+  display: flex;
+  align-items: stretch;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+  height: 80px;
+  gap: 0;
+  overflow: hidden;
+}
+
+/* ---- Left: Stats Column ---- */
+.wo-tension__stats {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  flex-shrink: 0;
+  min-width: 280px;
+  border-right: 1px solid var(--border-subtle);
+}
+
+.wo-tension__stat-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.wo-tension__label {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.wo-tension__value-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-sm);
+}
+
+.wo-tension__value {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.wo-tension__delta {
+  font-size: var(--text-small);
+  font-weight: 600;
+}
+
+.wo-tension__period {
+  font-size: 9px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* ---- Counters (Aircraft / Active) ---- */
+.wo-tension__counters {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.wo-tension__counter-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--text-micro);
+  color: var(--text-secondary);
+}
+
+.wo-tension__counter-item svg {
+  color: var(--signal-blue);
+  flex-shrink: 0;
+}
+
+.wo-tension__counter-item .mono {
+  font-weight: 600;
+  min-width: 28px;
+}
+
+/* ---- Right: Chart Area ---- */
+.wo-tension__chart-wrapper {
+  flex: 1;
+  position: relative;
+  min-width: 0;
+}
+
+.wo-tension__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* D3 element styles */
+.wo-tension-grid-line {
+  stroke: var(--border-subtle);
+  stroke-dasharray: 3, 4;
+  stroke-width: 0.5;
+}
+
+.wo-tension-y-label {
+  fill: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: 9px;
+}
+
+.wo-tension-x-label {
+  fill: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  text-transform: uppercase;
+}
+
+.wo-tension-dot {
+  transition: r 150ms ease;
+}
+
+/* ---- Hover Tooltip ---- */
+.wo-tension__tooltip {
+  position: absolute;
+  pointer-events: none;
+  transform: translate(-50%, -100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  background: rgba(10, 10, 10, 0.92);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  padding: 3px 8px;
+  z-index: 10;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.wo-tension__tooltip-date {
+  font-size: 9px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.wo-tension__tooltip-value {
+  font-size: 12px;
+  font-weight: 700;
+}

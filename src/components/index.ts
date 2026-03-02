@@ -14,3 +14,5 @@ export { EventDetailModal } from './EventDetailModal'
 export { PulseFeed } from './PulseFeed'
 export { ConnectionStatusBadge } from './ConnectionStatusBadge'
 export { InteractiveGlobe } from './InteractiveGlobe'
+export { TensionChart, MOCK_TENSION_DATA } from './TensionChart'
+

@@ -131,14 +131,14 @@
 
 ### 1.5 Global Tension Index (Below Globe)
 
-- [ ] Build **7-day line chart** using D3:
+- [x] Build **7-day line chart** using D3:
   - Thin line, subtle grid, no heavy chart chrome
   - Red/Green delta indicator
   - % change vs last week
   - Hover to inspect day values
   - Smooth animation transitions
-- [ ] Create API endpoint for tension index data
-- [ ] Store computed tension index in Redis (`counters:{variant}`)
+- [x] Create API endpoint for tension index data — client function `fetchTensionIndex` already in api.ts
+- [x] Store computed tension index in Redis (`counters:{variant}`) — key defined in redis.ts
 
 ### 1.6 Right Panel — Data Modules
 
