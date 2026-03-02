@@ -62,9 +62,9 @@ const PulseFeed: React.FC<PulseFeedProps> = ({ events }) => {
 
   return (
     <div className="wo-pulse-feed">
-      {/* Smart Digest — Locked */}
+      {/* Smart Digest */}
       <div className="wo-pulse-feed__digest">
-        <div className="wo-pulse-feed__digest-content">
+        <div className="wo-pulse-feed__digest-content wo-pulse-feed__digest-content--open">
           <div className="wo-pulse-feed__digest-header">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 2L2 7l10 5 10-5-10-5z" />
@@ -76,10 +76,6 @@ const PulseFeed: React.FC<PulseFeedProps> = ({ events }) => {
           <p className="wo-pulse-feed__digest-preview">
             AI-generated intelligence briefing updated daily...
           </p>
-        </div>
-        <div className="wo-pulse-feed__digest-lock">
-          <span className="wo-pulse-feed__digest-lock-icon">🔒</span>
-          <span className="wo-pulse-feed__digest-lock-text">Signal Clearance Required</span>
         </div>
       </div>
 

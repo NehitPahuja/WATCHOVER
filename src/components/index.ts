@@ -15,4 +15,11 @@ export { PulseFeed } from './PulseFeed'
 export { ConnectionStatusBadge } from './ConnectionStatusBadge'
 export { InteractiveGlobe } from './InteractiveGlobe'
 export { TensionChart, MOCK_TENSION_DATA } from './TensionChart'
+export { PredictionCard } from './PredictionCard'
+export type { Prediction } from './PredictionCard'
+export { MarketsModule } from './MarketsModule'
+export type { MarketEntry } from './MarketsModule'
+export { KeywordsModule } from './KeywordsModule'
+export type { KeywordEntry } from './KeywordsModule'
+
 

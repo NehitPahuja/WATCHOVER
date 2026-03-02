@@ -56,8 +56,7 @@
 - [x] Provision **Redis** (Upstash) for caching, rate limiting, hot state — Client + key patterns ready
 - [x] Set up **Vercel** project for frontend + Edge/Serverless API functions — vercel.json + api/ routes
 - [x] Define **OpenAPI spec** (proto-first contracts) for all endpoints — server/api/openapi.yaml
-- [x] Set up **Auth** (Clerk or Auth0) with RBAC roles: Admin, Subscriber, Free User — Auth middleware + permissions
-- [x] Set up **Stripe** for subscription billing ("Signal Clearance" tiers) — 3-tier config ready
+- [x] Set up **Auth** (Clerk or Auth0) with roles: Admin, Editor, User — Auth middleware + permissions
 
 ---
 
@@ -93,7 +92,7 @@
   - Title, Category Tag (HIGH/MEDIUM), Confidence %, Source, Timestamp, Country flag, Expand arrow
   - States: Default, Hover (border glow), Expanded (summary), Escalation (red), De-escalation (green)
 - [x] Build **Pulse Feed** list with virtualized scrolling (performance)
-- [x] Implement **Smart Digest** section (locked for free users)
+- [x] Implement **Smart Digest** section (open to all users)
 - [x] Build **filtering system**:
   - Tabs: High, Medium, 24H, Escalation, De-escalation
   - Search bar with keyword + country filtering
@@ -142,15 +141,15 @@
 
 ### 1.6 Right Panel — Data Modules
 
-- [ ] **Predictions Module**:
+- [x] **Predictions Module**:
   - Card: Category icon, Vote count, Time remaining, Question, Probability %, trend line chart, Yes/No split bar
   - Click → full Prediction page
-  - Locked state for unsubscribed users
-- [ ] **Markets Module**:
+  - Accessible to all users
+- [x] **Markets Module**:
   - Live indices: S&P 500, NASDAQ, Dow Jones, DAX
   - Each shows: Value, % change, Red/Green indicator
   - Refresh icon
-- [ ] **Top Keywords (24H)**:
+- [x] **Top Keywords (24H)**:
   - Ranked list with mention counts
   - Click → filter feed by keyword
 
@@ -164,12 +163,7 @@
   - Header: Title, Description, Active/Resolved tabs, Vote count, Countdown
   - Probability time-series chart (green for YES, thin axis grid, smooth animation)
   - Yes/No probability bar
-  - Vote CTA
-  - Subscription wall sidebar ("Signal Clearance Required")
-- [ ] Build **Vote Interaction Flow**:
-  - Not signed in → "Sign in to vote"
-  - Signed in, not subscribed → Show subscription modal
-  - Subscribed → Yes/No buttons → Confirmation modal → Update probability
+  - Vote CTA (open to all signed-in users)
 
 ### 2.2 Predictions Backend
 
@@ -180,19 +174,9 @@
 - [ ] Build API endpoints:
   - `GET /predictions` (list, filterable)
   - `GET /predictions/{id}` (detail with chart data)
-  - `POST /predictions/{id}/vote` (auth + subscription gated)
+  - `POST /predictions/{id}/vote` (auth required)
 - [ ] Implement **probability calculation**: weighted ratio YES/(YES+NO) (baseline)
 - [ ] Store latest probability in Redis (`prediction:prob:{id}`)
-
-### 2.3 Subscription System ("Signal Clearance")
-
-- [ ] Integrate **Stripe** for subscription billing
-- [ ] Design subscription tiers with feature gating
-- [ ] Build **locked content pattern** UI:
-  - Dark overlay + Red lock icon + CTA button + Pricing preview
-  - No intrusive popups
-- [ ] Implement subscription check middleware on gated API endpoints
-- [ ] Create `subscriptions` table in Postgres
 
 ---
 
@@ -236,7 +220,6 @@
 - [ ] Integrate pluggable AI provider (with fallback chain)
 - [ ] Generate daily **Smart Digest** summaries
 - [ ] Cache AI results in Redis (`cache:ai:brief:{date}:{variant}`)
-- [ ] Gate Smart Digest behind subscription
 
 ### 4.2 Analytics & Reporting
 
@@ -248,7 +231,7 @@
   - Heat map by region
 - [ ] Implement **date range filtering** (7d, 30d, 90d, custom)
 - [ ] Add **export** to CSV/PDF
-- [ ] Enforce **role-based visibility** on analytics
+- [ ] Enforce **role-based visibility** on analytics (Admin/Editor only)
 
 ---
 
@@ -258,7 +241,7 @@
 
 - [ ] Implement **rate limiting** (Upstash Ratelimit) on API + WS connections
 - [ ] Implement **input sanitization** (DOMPurify)
-- [ ] Enforce **RBAC** server-side on all endpoints
+- [ ] Enforce **RBAC** server-side on all endpoints (Admin, Editor, User)
 - [ ] Build **audit log** system for all moderator/editor actions (`audit_logs` table)
 - [ ] Ensure HTTPS everywhere, data encryption at rest
 

@@ -1,0 +1,103 @@
+/* =============================================
+   KeywordsModule — Right Panel Keywords
+   ============================================= */
+
+.wo-keywords {
+  padding: var(--spacing-md);
+}
+
+.wo-keywords__title {
+  font-size: var(--text-micro);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: var(--spacing-md);
+  font-weight: 600;
+}
+
+.wo-keywords__list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* ---- Keyword Row ---- */
+.wo-kw__row {
+  display: grid;
+  grid-template-columns: 24px 1fr auto auto;
+  gap: var(--spacing-sm);
+  align-items: center;
+  padding: 7px 6px;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-family: var(--font-primary);
+  transition: background var(--transition-fast);
+  text-align: left;
+  position: relative;
+}
+
+.wo-kw__row:hover {
+  background: var(--bg-hover);
+}
+
+.wo-kw__row:hover .wo-kw__word {
+  color: var(--signal-blue);
+}
+
+.wo-kw__rank {
+  font-size: var(--text-micro);
+}
+
+.wo-kw__word-col {
+  position: relative;
+  overflow: hidden;
+}
+
+.wo-kw__word {
+  font-size: var(--text-small);
+  font-weight: 500;
+  color: var(--text-primary);
+  position: relative;
+  z-index: 1;
+  transition: color var(--transition-fast);
+}
+
+/* Relative frequency bar behind keyword */
+.wo-kw__bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: rgba(44, 168, 255, 0.06);
+  border-radius: var(--radius-sm);
+  transition: width var(--transition-slow);
+}
+
+/* ---- Trend ---- */
+.wo-kw__trend {
+  font-size: 11px;
+  font-weight: 700;
+  width: 16px;
+  text-align: center;
+}
+
+.wo-kw__trend--up {
+  color: var(--signal-green);
+}
+
+.wo-kw__trend--down {
+  color: var(--signal-red);
+}
+
+.wo-kw__trend--stable {
+  color: var(--text-dim);
+}
+
+.wo-kw__count {
+  font-size: var(--text-micro);
+  min-width: 40px;
+  text-align: right;
+}

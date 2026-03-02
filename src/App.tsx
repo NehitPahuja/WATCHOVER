@@ -1,5 +1,5 @@
-import { DashboardLayout, Navbar, NewsTicker, Badge, PulseFeed, InteractiveGlobe, TensionChart, MOCK_TENSION_DATA } from './components'
-import type { TickerItem } from './components'
+import { DashboardLayout, Navbar, NewsTicker, PulseFeed, InteractiveGlobe, TensionChart, MOCK_TENSION_DATA, PredictionCard, MarketsModule, KeywordsModule } from './components'
+import type { TickerItem, Prediction, MarketEntry, KeywordEntry } from './components'
 import type { WatchEvent } from './types'
 import './App.css'
 
@@ -202,18 +202,26 @@ const MOCK_EVENTS: WatchEvent[] = [
   },
 ]
 
-const MOCK_PREDICTIONS = [
-  { id: '1', question: 'Will there be a new ceasefire agreement by Q2 2026?', category: 'MIL', probability: 62, votes: 1847, timeLeft: '14d', trend: 'up' as const },
-  { id: '2', question: 'Will NATO invoke Article 5 this year?', category: 'POL', probability: 8, votes: 3291, timeLeft: '89d', trend: 'stable' as const },
-  { id: '3', question: 'Will oil prices exceed $120/barrel by March?', category: 'ECN', probability: 34, votes: 956, timeLeft: '28d', trend: 'down' as const },
+const MOCK_PREDICTIONS: Prediction[] = [
+  { id: '1', question: 'Will there be a new ceasefire agreement by Q2 2026?', category: 'MIL', probability: 62, votes: 1847, timeLeft: '14d', trend: 'up', sparkline: [48, 52, 55, 58, 54, 60, 62] },
+  { id: '2', question: 'Will NATO invoke Article 5 this year?', category: 'POL', probability: 8, votes: 3291, timeLeft: '89d', trend: 'stable', sparkline: [10, 9, 11, 8, 9, 8, 8] },
+  { id: '3', question: 'Will oil prices exceed $120/barrel by March?', category: 'ECN', probability: 34, votes: 956, timeLeft: '28d', trend: 'down', sparkline: [45, 42, 40, 38, 36, 35, 34] },
+  { id: '4', question: 'Will sanctions be lifted on Iran by 2027?', category: 'DIP', probability: 21, votes: 412, timeLeft: '180d', trend: 'up', sparkline: [15, 16, 18, 17, 19, 20, 21] },
 ]
 
-const MOCK_KEYWORDS = [
-  { rank: 1, keyword: 'Iran', count: 2847 },
-  { rank: 2, keyword: 'Airspace', count: 1923 },
-  { rank: 3, keyword: 'Sanctions', count: 1654 },
-  { rank: 4, keyword: 'NATO', count: 1432 },
-  { rank: 5, keyword: 'Ceasefire', count: 1201 },
+const MOCK_MARKETS: MarketEntry[] = [
+  { name: 'S&P 500', symbol: 'SPX', value: '5,234.18', change: '0.67%', isUp: true },
+  { name: 'NASDAQ', symbol: 'NDX', value: '16,742.39', change: '0.23%', isUp: false },
+  { name: 'Dow Jones', symbol: 'DJI', value: '39,142.23', change: '0.41%', isUp: true },
+  { name: 'DAX', symbol: 'DAX', value: '18,456.12', change: '1.12%', isUp: true },
+]
+
+const MOCK_KEYWORDS: KeywordEntry[] = [
+  { rank: 1, keyword: 'Iran', count: 2847, trend: 'up' },
+  { rank: 2, keyword: 'Airspace', count: 1923, trend: 'up' },
+  { rank: 3, keyword: 'Sanctions', count: 1654, trend: 'stable' },
+  { rank: 4, keyword: 'NATO', count: 1432, trend: 'down' },
+  { rank: 5, keyword: 'Ceasefire', count: 1201, trend: 'up' },
 ]
 
 // =============================================
@@ -270,61 +278,22 @@ function RightPanel() {
       <section className="panel-section">
         <h3 className="panel-section__title">Top Predictions</h3>
         {MOCK_PREDICTIONS.map((pred) => (
-          <div key={pred.id} className="prediction-card">
-            <div className="prediction-card__top">
-              <Badge severity="info" size="sm">{pred.category}</Badge>
-              <span className="prediction-card__meta mono text-muted">
-                {pred.votes} votes · {pred.timeLeft}
-              </span>
-            </div>
-            <p className="prediction-card__question">{pred.question}</p>
-            <div className="prediction-card__bar-wrapper">
-              <div className="prediction-card__bar">
-                <div className="prediction-card__bar-fill" style={{ width: `${pred.probability}%` }} />
-              </div>
-              <span className="prediction-card__prob mono">{pred.probability}%</span>
-            </div>
-          </div>
+          <PredictionCard
+            key={pred.id}
+            prediction={pred}
+            onClick={(p) => console.log('View prediction:', p.id)}
+          />
         ))}
       </section>
 
       {/* Markets */}
-      <section className="panel-section">
-        <h3 className="panel-section__title">
-          Markets
-          <button className="panel-section__refresh" aria-label="Refresh markets">↻</button>
-        </h3>
-        <div className="markets-list">
-          {[
-            { name: 'S&P 500', value: '5,234.18', change: '+0.67%', up: true },
-            { name: 'NASDAQ', value: '16,742.39', change: '-0.23%', up: false },
-            { name: 'Dow Jones', value: '39,142.23', change: '+0.41%', up: true },
-            { name: 'DAX', value: '18,456.12', change: '+1.12%', up: true },
-          ].map((market) => (
-            <div key={market.name} className="market-row">
-              <span className="market-row__name">{market.name}</span>
-              <span className="market-row__value mono">{market.value}</span>
-              <span className={`market-row__change mono ${market.up ? 'text-green' : 'text-red'}`}>
-                {market.change}
-              </span>
-            </div>
-          ))}
-        </div>
-      </section>
+      <MarketsModule markets={MOCK_MARKETS} />
 
       {/* Keywords */}
-      <section className="panel-section">
-        <h3 className="panel-section__title">Top Keywords (24H)</h3>
-        <div className="keywords-list">
-          {MOCK_KEYWORDS.map((kw) => (
-            <button key={kw.rank} className="keyword-row">
-              <span className="keyword-row__rank mono text-muted">#{kw.rank}</span>
-              <span className="keyword-row__word">{kw.keyword}</span>
-              <span className="keyword-row__count mono text-muted">{kw.count.toLocaleString()}</span>
-            </button>
-          ))}
-        </div>
-      </section>
+      <KeywordsModule
+        keywords={MOCK_KEYWORDS}
+        onKeywordClick={(kw) => console.log('Filter by keyword:', kw)}
+      />
     </div>
   )
 }

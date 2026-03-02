@@ -1,0 +1,162 @@
+/* =============================================
+   PredictionCard — Right Panel Prediction Tile
+   ============================================= */
+
+.wo-pred {
+  position: relative;
+  padding: var(--spacing-sm) 0;
+  border-bottom: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  border-radius: var(--radius-sm);
+}
+
+.wo-pred:last-child {
+  border-bottom: none;
+}
+
+.wo-pred:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* ---- Top Row ---- */
+.wo-pred__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.wo-pred__meta {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+}
+
+.wo-pred__separator {
+  color: var(--text-dim);
+}
+
+/* ---- Question ---- */
+.wo-pred__question {
+  font-size: var(--text-small);
+  color: var(--text-primary);
+  line-height: 1.4;
+  margin-bottom: var(--spacing-sm);
+}
+
+/* ---- Bottom Row ---- */
+.wo-pred__bottom {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+/* ---- Yes/No Split Bar ---- */
+.wo-pred__split-bar {
+  flex: 1;
+  display: flex;
+  height: 18px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  font-size: 9px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.wo-pred__split-yes {
+  background: rgba(0, 255, 133, 0.2);
+  color: var(--signal-green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  transition: width var(--transition-slow);
+}
+
+.wo-pred__split-no {
+  background: rgba(255, 59, 59, 0.15);
+  color: var(--signal-red);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  transition: width var(--transition-slow);
+}
+
+.wo-pred__split-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 6px;
+}
+
+/* ---- Chart Area (Sparkline + Trend) ---- */
+.wo-pred__chart-area {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.wo-pred__sparkline {
+  display: block;
+}
+
+/* ---- Trend Arrow ---- */
+.wo-pred__trend {
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.wo-pred__trend--up {
+  color: var(--signal-green);
+}
+
+.wo-pred__trend--down {
+  color: var(--signal-red);
+}
+
+.wo-pred__trend--stable {
+  color: var(--signal-yellow);
+}
+
+/* ---- Locked State ---- */
+.wo-pred--locked {
+  position: relative;
+  cursor: default;
+  overflow: hidden;
+}
+
+.wo-pred__locked-content {
+  filter: blur(3px);
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.wo-pred__locked-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  z-index: 2;
+}
+
+.wo-pred__lock-icon {
+  font-size: 16px;
+}
+
+.wo-pred__lock-label {
+  font-size: 9px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--signal-red);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}

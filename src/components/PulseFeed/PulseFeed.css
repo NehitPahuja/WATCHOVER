@@ -19,9 +19,12 @@
 }
 
 .wo-pulse-feed__digest-content {
-  filter: blur(2px);
-  opacity: 0.4;
-  pointer-events: none;
+  opacity: 1;
+}
+
+.wo-pulse-feed__digest-content--open {
+  filter: none;
+  pointer-events: auto;
 }
 
 .wo-pulse-feed__digest-header {
