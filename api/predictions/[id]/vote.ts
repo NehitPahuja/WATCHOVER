@@ -2,11 +2,20 @@
  * POST /api/predictions/[id]/vote
  *
  * Cast a vote on a prediction.
- * Requires auth + active subscription.
+ * Requires auth + predictions:vote permission (admin or subscriber).
+ *
+ * Body: { side: 'yes' | 'no', weight?: number }
+ *
+ * Returns updated probability and total votes.
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { verifyAuth, hasPermission } from '../../../server/lib/auth'
+import { createDb } from '../../../server/db'
+import {
+  castVote,
+  PredictionError,
+} from '../../../server/services/predictions'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
@@ -17,12 +26,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Auth check
     const session = await verifyAuth(req as unknown as Request)
     if (!session) {
-      return res.status(401).json({ error: 'Authentication required' })
+      return res.status(401).json({ error: 'Authentication required. Sign in to vote.' })
     }
 
     // Permission check
     if (!hasPermission(session.role, 'predictions:vote')) {
-      return res.status(403).json({ error: 'Signal Clearance subscription required to vote' })
+      return res.status(403).json({
+        error: 'Signal Clearance subscription required to vote',
+        requiredRole: 'subscriber',
+      })
     }
 
     const { id } = req.query
@@ -36,24 +48,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: 'Vote side must be "yes" or "no"' })
     }
 
-    // TODO: Implement when database is provisioned
-    // 1. Check prediction exists and is active
-    // 2. Check user hasn't already voted (or update vote)
-    // 3. Insert vote into prediction_votes
-    // 4. Recalculate probability: YES_weight / (YES_weight + NO_weight)
-    // 5. Insert new prediction_snapshot
-    // 6. Update Redis cache (prediction:prob:{id})
-    // 7. Broadcast via WebSocket relay (predictions:update)
-    // 8. Log to audit_logs
+    // Validate weight (bounded between 0.1 and 5)
+    const parsedWeight = Math.max(0.1, Math.min(5, Number(weight) || 1))
 
-    return res.status(200).json({
-      message: 'Vote recorded',
-      predictionId: id,
-      side,
-      weight,
-      updatedProbability: null, // Will be computed
-    })
+    const db = createDb()
+    const result = await castVote(db, id, session.userId, side, parsedWeight)
+
+    return res.status(200).json(result)
   } catch (error) {
+    if (error instanceof PredictionError) {
+      return res.status(error.statusCode).json({ error: error.message })
+    }
+
     console.error('Error casting vote:', error)
     return res.status(500).json({ error: 'Internal server error' })
   }

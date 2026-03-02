@@ -167,16 +167,16 @@
 
 ### 2.2 Predictions Backend
 
-- [ ] Create Postgres tables:
+- [x] Create Postgres tables:
   - `predictions`: `id, question, description, category, closes_at, resolution_rules, status`
   - `prediction_votes`: `prediction_id, user_id, side, weight, created_at`
   - `prediction_snapshots`: computed probability timeline points
-- [ ] Build API endpoints:
+- [x] Build API endpoints:
   - `GET /predictions` (list, filterable)
   - `GET /predictions/{id}` (detail with chart data)
   - `POST /predictions/{id}/vote` (auth required)
-- [ ] Implement **probability calculation**: weighted ratio YES/(YES+NO) (baseline)
-- [ ] Store latest probability in Redis (`prediction:prob:{id}`)
+- [x] Implement **probability calculation**: weighted ratio YES/(YES+NO) (baseline)
+- [x] Store latest probability in Redis (`prediction:prob:{id}`)
 
 ---
 
