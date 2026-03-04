@@ -154,6 +154,17 @@
 .wo-smart-digest__body {
   padding: 0 var(--spacing-md) var(--spacing-md);
   animation: digest-expand 250ms ease;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.wo-smart-digest__body::-webkit-scrollbar {
+  width: 3px;
+}
+
+.wo-smart-digest__body::-webkit-scrollbar-thumb {
+  background: var(--text-dim);
+  border-radius: var(--radius-full);
 }
 
 @keyframes digest-expand {

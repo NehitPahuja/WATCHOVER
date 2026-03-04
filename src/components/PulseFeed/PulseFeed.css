@@ -6,7 +6,6 @@
 .wo-pulse-feed {
   display: flex;
   flex-direction: column;
-  height: 100%;
 }
 
 /* ---- Smart Digest (Locked) ---- */
@@ -194,8 +193,6 @@
 
 /* ---- Event List ---- */
 .wo-pulse-feed__list {
-  flex: 1;
-  overflow-y: auto;
   padding: var(--spacing-sm);
   display: flex;
   flex-direction: column;
