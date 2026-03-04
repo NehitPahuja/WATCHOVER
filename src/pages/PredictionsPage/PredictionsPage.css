@@ -15,8 +15,9 @@
 .predictions-page__topbar {
   display: flex;
   align-items: center;
-  gap: var(--spacing-md);
-  padding: var(--spacing-md) var(--spacing-lg);
+  justify-content: space-between;
+  height: var(--nav-height);
+  padding: 0 var(--spacing-lg);
   background: var(--bg-secondary);
   border-bottom: 1px solid var(--border-subtle);
   position: sticky;
@@ -27,44 +28,34 @@
 .predictions-page__back {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--spacing-sm);
   background: none;
-  border: 1px solid var(--border-light);
-  color: var(--text-secondary);
+  border: none;
+  color: var(--text-muted);
   font-family: var(--font-mono);
-  font-size: var(--text-micro);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  padding: 6px 12px;
-  border-radius: var(--radius-md);
+  font-size: var(--text-small);
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: color var(--transition-fast);
 }
 
 .predictions-page__back:hover {
-  background: var(--bg-hover);
   color: var(--text-primary);
-  border-color: var(--border-hover);
 }
 
 .predictions-page__back-arrow {
-  font-size: 14px;
+  font-size: 18px;
   line-height: 1;
 }
 
 .predictions-page__logo {
   font-family: var(--font-heading);
-  font-size: var(--text-h3);
+  font-size: var(--text-body);
   font-weight: 700;
-  letter-spacing: -0.02em;
-  background: linear-gradient(135deg, var(--signal-blue), var(--signal-cyan));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--text-primary);
+  letter-spacing: 0.04em;
 }
 
 .predictions-page__topbar-right {
-  margin-left: auto;
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
@@ -75,10 +66,12 @@
   align-items: center;
   gap: 6px;
   font-family: var(--font-mono);
-  font-size: var(--text-micro);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+  font-size: 11px;
+  font-weight: 600;
   color: var(--signal-green);
+  border: 1px solid rgba(0, 255, 133, 0.2);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
 }
 
 .predictions-page__live-dot {
@@ -86,6 +79,7 @@
   height: 6px;
   border-radius: 50%;
   background: var(--signal-green);
+  box-shadow: 0 0 6px rgba(0, 255, 133, 0.5);
   animation: pulse-live 2s ease-in-out infinite;
 }
 
