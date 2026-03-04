@@ -22,5 +22,6 @@ export type { MarketEntry } from './MarketsModule'
 export { KeywordsModule } from './KeywordsModule'
 export type { KeywordEntry } from './KeywordsModule'
 export { AnimatedCounter } from './AnimatedCounter'
+export { SmartDigest } from './SmartDigest'
 
 

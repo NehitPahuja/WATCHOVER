@@ -14,7 +14,10 @@
     "relay:dev": "npx tsx server/relay/server.ts",
     "db:seed-predictions": "npx tsx server/scripts/seed-predictions.ts",
     "ingest:rss": "npx tsx server/ingestion/rss-worker.ts",
-    "ingest:connectors": "npx tsx server/ingestion/connectors.ts"
+    "ingest:connectors": "npx tsx server/ingestion/connectors.ts",
+    "digest:generate": "npx tsx server/scripts/generate-digest.ts",
+    "digest:generate:force": "npx tsx server/scripts/generate-digest.ts --force",
+    "digest:serve": "npx tsx server/api/digest.ts"
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.61.3",

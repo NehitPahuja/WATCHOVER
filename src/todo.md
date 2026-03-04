@@ -205,6 +205,8 @@
 
 ### 3.3 Frontend Realtime Integration
 
+to run use npm run ingest:rss, npm run relay:dev and npm run ingest:connectors
+
 - [x] Connect React app to WebSocket relay (`wss://relay.watchover.app`)
 - [x] Update Pulse Feed in real-time on `events:new`
 - [x] Update globe markers in real-time
@@ -217,9 +219,9 @@
 
 ### 4.1 Smart Digest / AI Summarization
 
-- [ ] Integrate pluggable AI provider (with fallback chain)
-- [ ] Generate daily **Smart Digest** summaries
-- [ ] Cache AI results in Redis (`cache:ai:brief:{date}:{variant}`)
+- [x] Integrate pluggable AI provider (with fallback chain)
+- [x] Generate daily **Smart Digest** summaries
+- [x] Cache AI results in Redis (`cache:ai:brief:{date}:{variant}`)
 
 ### 4.2 Analytics & Reporting
 

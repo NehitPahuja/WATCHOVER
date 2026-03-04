@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react'
 import type { WatchEvent } from '../../types'
 import { EventCard } from '../EventCard'
 import { EventDetailModal } from '../EventDetailModal'
+import { SmartDigest } from '../SmartDigest'
 import './PulseFeed.css'
 
 type FilterTab = 'all' | 'high' | 'medium' | '24h' | 'escalation' | 'de-escalation'
@@ -62,22 +63,8 @@ const PulseFeed: React.FC<PulseFeedProps> = ({ events }) => {
 
   return (
     <div className="wo-pulse-feed">
-      {/* Smart Digest */}
-      <div className="wo-pulse-feed__digest">
-        <div className="wo-pulse-feed__digest-content wo-pulse-feed__digest-content--open">
-          <div className="wo-pulse-feed__digest-header">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M12 2L2 7l10 5 10-5-10-5z" />
-              <path d="M2 17l10 5 10-5" />
-              <path d="M2 12l10 5 10-5" />
-            </svg>
-            <span>Smart Digest</span>
-          </div>
-          <p className="wo-pulse-feed__digest-preview">
-            AI-generated intelligence briefing updated daily...
-          </p>
-        </div>
-      </div>
+      {/* Smart Digest — AI Intelligence Briefing */}
+      <SmartDigest />
 
       {/* Header + Filters */}
       <div className="wo-pulse-feed__header">
