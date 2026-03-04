@@ -42,10 +42,11 @@ export function generateEventHash(event: RawIngestedEvent): string {
     .replace(/\s+/g, ' ')
     .trim()
 
-  // Use external ID if available (most reliable), otherwise title + source
+  // We use title + sourceName instead of sourceUrl because many news sites
+  // attach tracking tokens or update article URLs dynamically which defeats dedup.
   const input = event.externalId
     ? `${event.externalId}`
-    : `${normalizedTitle}|${event.sourceUrl}`
+    : `${normalizedTitle}|${event.sourceName}`
 
   return createHash('sha256').update(input).digest('hex').slice(0, 16)
 }

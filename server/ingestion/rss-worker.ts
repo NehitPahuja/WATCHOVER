@@ -58,7 +58,7 @@ export const RSS_FEEDS: RssFeedConfig[] = [
   {
     name: 'Reuters World',
     url: 'https://feeds.reuters.com/Reuters/worldNews',
-    interval: 60_000,
+    interval: 120_000,
     defaultSeverity: 'medium',
     category: 'General',
     credibility: 95,
@@ -67,7 +67,7 @@ export const RSS_FEEDS: RssFeedConfig[] = [
   {
     name: 'BBC World',
     url: 'http://feeds.bbci.co.uk/news/world/rss.xml',
-    interval: 60_000,
+    interval: 120_000,
     defaultSeverity: 'medium',
     category: 'General',
     credibility: 94,
@@ -76,7 +76,7 @@ export const RSS_FEEDS: RssFeedConfig[] = [
   {
     name: 'Al Jazeera',
     url: 'https://www.aljazeera.com/xml/rss/all.xml',
-    interval: 90_000,
+    interval: 120_000,
     defaultSeverity: 'medium',
     category: 'General',
     credibility: 82,
@@ -85,7 +85,7 @@ export const RSS_FEEDS: RssFeedConfig[] = [
   {
     name: 'SIPRI News',
     url: 'https://www.sipri.org/rss.xml',
-    interval: 300_000,
+    interval: 120_000,
     defaultSeverity: 'medium',
     category: 'Military',
     credibility: 92,
@@ -338,6 +338,9 @@ export async function fetchAndProcessFeed(
           const payload: EventNewPayload = {
             id: inserted.id,
             title: item.title,
+            summary: item.description.slice(0, 500) || 'No summary available.',
+            sourceUrl: item.link,
+            sourceName: feedConfig.name,
             severity,
             sentiment,
             region: 'Global', // Would be determined by NLP/geolocation in production

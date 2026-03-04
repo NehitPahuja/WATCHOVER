@@ -57,6 +57,9 @@ export type WsChannel =
 export interface EventNewPayload {
   id: string
   title: string
+  summary: string
+  sourceUrl?: string
+  sourceName?: string
   severity: 'critical' | 'high' | 'medium' | 'low'
   sentiment: 'escalation' | 'de-escalation' | 'neutral'
   region: string

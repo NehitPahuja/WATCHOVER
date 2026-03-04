@@ -100,7 +100,7 @@ export function useRealtimeDashboard(
         const newEvent: WatchEvent = {
           id: payload.id,
           title: payload.title,
-          summary: '',
+          summary: payload.summary || '',
           region: payload.region || 'Unknown',
           country: payload.region || 'Unknown',
           countryCode: '',
@@ -111,13 +111,20 @@ export function useRealtimeDashboard(
           sentiment: payload.sentiment,
           confidence: payload.confidence,
           category: 'Breaking',
-          sources: [],
+          sources: payload.sourceUrl ? [{
+            name: payload.sourceName || 'Unknown Source',
+            url: payload.sourceUrl,
+            credibility: 80
+          }] : [],
           activityCount24h: 0,
           publishedAt: payload.publishedAt,
           timeAgo: 'Just now',
         }
 
-        setRealtimeEvents(prev => [newEvent, ...prev].slice(0, 50))
+        setRealtimeEvents(prev => {
+          if (prev.some(e => e.id === payload.id)) return prev
+          return [newEvent, ...prev].slice(0, 50)
+        })
         break
       }
 
