@@ -5,6 +5,7 @@ import type { TickerItem, Prediction, MarketEntry, KeywordEntry } from './compon
 import type { WatchEvent } from './types'
 import { useRealtimeDashboard } from './hooks'
 import { PredictionsPage } from './pages/PredictionsPage'
+import { AnalyticsPage } from './pages/AnalyticsPage'
 import './App.css'
 
 // =============================================
@@ -287,6 +288,7 @@ function App() {
       <Route path="/" element={<Dashboard />} />
       <Route path="/predictions" element={<PredictionsPage />} />
       <Route path="/predictions/:id" element={<PredictionsPage />} />
+      <Route path="/analytics" element={<AnalyticsPage />} />
     </Routes>
   )
 }

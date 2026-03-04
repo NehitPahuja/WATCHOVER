@@ -219,20 +219,22 @@ to run use npm run ingest:rss, npm run relay:dev and npm run ingest:connectors
 
 ### 4.1 Smart Digest / AI Summarization
 
+npm run digest:serve # Start the digest API (port 3001)
+
 - [x] Integrate pluggable AI provider (with fallback chain)
 - [x] Generate daily **Smart Digest** summaries
 - [x] Cache AI results in Redis (`cache:ai:brief:{date}:{variant}`)
 
 ### 4.2 Analytics & Reporting
 
-- [ ] Build **analytics dashboard** with charts (D3):
+- [x] Build **analytics dashboard** with charts (D3):
   - Conflict volume by region
   - Conflict type distribution
   - Resolution time trends
   - Escalation rate
   - Heat map by region
-- [ ] Implement **date range filtering** (7d, 30d, 90d, custom)
-- [ ] Add **export** to CSV/PDF
+- [x] Implement **date range filtering** (7d, 30d, 90d, custom)
+- [x] Add **export** to CSV/PDF
 - [ ] Enforce **role-based visibility** on analytics (Admin/Editor only)
 
 ---

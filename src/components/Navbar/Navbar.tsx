@@ -66,6 +66,9 @@ const Navbar: React.FC<NavbarProps> = ({
         <Button variant="ghost" size="sm" onClick={() => navigate('/predictions')}>
           Predictions
         </Button>
+        <Button variant="ghost" size="sm" onClick={() => navigate('/analytics')}>
+          Analytics
+        </Button>
         <Button variant="cta" size="sm" onClick={onSubscribeClick}>
           Subscribe
         </Button>
