@@ -50,7 +50,7 @@ WATCHOVER
 
 The project may use technologies such as:
 
-* **Programming Language:** JavaScript / TypeScript
+* **Programming Language:** TypeScript / CSS
 * **Frameworks:** Node.js / React 
 * **AI / ML:** Detection Models
 * **Database:** Neon / PostgreSQL
