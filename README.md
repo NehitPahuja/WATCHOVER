@@ -50,13 +50,11 @@ WATCHOVER
 
 The project may use technologies such as:
 
-* **Programming Language:** Python / JavaScript / TypeScript
-* **Frameworks:** Node.js / Flask / FastAPI / React (depending on implementation)
-* **AI / ML:** Computer Vision / Detection Models
-* **Database:** MongoDB / PostgreSQL
-* **Tools:** Git, Docker, APIs
-
-*(Modify this based on the actual stack used in the repo.)*
+* **Programming Language:** JavaScript / TypeScript
+* **Frameworks:** Node.js / React 
+* **AI / ML:** Detection Models
+* **Database:** Neon / PostgreSQL
+* **Tools:** APIs
 
 ---
 
