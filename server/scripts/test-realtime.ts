@@ -28,6 +28,7 @@ const SIMULATED_EVENTS: EventNewPayload[] = [
   {
     id: `test-${Date.now()}-1`,
     title: '🔴 BREAKING: Military forces mobilizing near disputed border zone',
+    summary: 'Multiple intelligence sources confirm significant military mobilization near the disputed border zone, raising tensions in the region.',
     severity: 'critical',
     sentiment: 'escalation',
     region: 'Eastern Europe',
@@ -38,6 +39,7 @@ const SIMULATED_EVENTS: EventNewPayload[] = [
   {
     id: `test-${Date.now()}-2`,
     title: 'Ceasefire negotiations resume after diplomatic breakthrough',
+    summary: 'Diplomatic sources report a breakthrough in ceasefire negotiations, with both sides agreeing to resume talks.',
     severity: 'medium',
     sentiment: 'de-escalation',
     region: 'Middle East',
@@ -48,6 +50,7 @@ const SIMULATED_EVENTS: EventNewPayload[] = [
   {
     id: `test-${Date.now()}-3`,
     title: 'Cyber attack targets financial infrastructure in NATO member state',
+    summary: 'A sophisticated cyber attack has targeted financial infrastructure in a NATO member state, disrupting banking services.',
     severity: 'high',
     sentiment: 'escalation',
     region: 'Western Europe',
@@ -58,6 +61,7 @@ const SIMULATED_EVENTS: EventNewPayload[] = [
   {
     id: `test-${Date.now()}-4`,
     title: 'UN Security Council emergency session called on regional tensions',
+    summary: 'The UN Security Council has called an emergency session to address escalating regional tensions and potential conflict.',
     severity: 'high',
     sentiment: 'neutral',
     region: 'Global',
@@ -68,6 +72,7 @@ const SIMULATED_EVENTS: EventNewPayload[] = [
   {
     id: `test-${Date.now()}-5`,
     title: 'Naval fleet detected conducting exercises in contested waters',
+    summary: 'Satellite imagery reveals a naval fleet conducting large-scale exercises in contested waters, heightening regional concerns.',
     severity: 'high',
     sentiment: 'escalation',
     region: 'South China Sea',

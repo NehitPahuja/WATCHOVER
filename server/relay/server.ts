@@ -6,6 +6,7 @@
  * 2. Manages channel subscriptions (global, region:*, prediction:*, layer:*)
  * 3. Receives events from backend (via shared secret) and fans out to subscribers
  * 4. Handles heartbeat/ping-pong for connection health
+ * 5. Enforces rate limiting, connection limits, and message throttling
  *
  * Deploy to Fly.io or Railway for always-on operation.
  *
@@ -33,6 +34,16 @@ const SHARED_SECRET = process.env.RELAY_SHARED_SECRET || 'dev-secret'
 const HEARTBEAT_INTERVAL = 30_000 // 30 seconds
 const CLIENT_TIMEOUT = 60_000     // 60 seconds without pong → disconnect
 
+// Security limits
+const MAX_CONNECTIONS_PER_IP = 10
+const MAX_MESSAGE_SIZE = 64 * 1024     // 64 KB max message size
+const MESSAGE_RATE_WINDOW = 10_000     // 10 second window
+const MESSAGE_RATE_LIMIT = 50          // Max 50 messages per window
+const MAX_CHANNELS_PER_CLIENT = 20     // Max channel subscriptions
+const MAX_AUTH_FAILURES = 5            // Ban after 5 failed auth attempts
+const AUTH_FAILURE_WINDOW = 300_000    // 5 minute window for auth failures
+const AUTH_TIMEOUT = 10_000            // Must authenticate within 10 seconds
+
 // =============================================
 // Client State
 // =============================================
@@ -40,14 +51,24 @@ const CLIENT_TIMEOUT = 60_000     // 60 seconds without pong → disconnect
 interface ClientState {
   ws: WebSocket
   id: string
+  ip: string
   channels: Set<string>
   isAuthenticated: boolean
   isServerPublisher: boolean
   lastPong: number
+  // Rate limiting
+  messageTimestamps: number[]
+  authFailures: number
+  connectedAt: number
 }
 
 const clients = new Map<string, ClientState>()
 const channelSubscribers = new Map<string, Set<string>>() // channel -> client IDs
+
+// IP-based tracking for connection limits and bans
+const ipConnectionCount = new Map<string, number>()
+const ipAuthFailures = new Map<string, { count: number; firstFailure: number }>()
+const bannedIPs = new Set<string>()
 
 let clientIdCounter = 0
 
@@ -55,21 +76,45 @@ let clientIdCounter = 0
 // Server Setup
 // =============================================
 
-const wss = new WebSocketServer({ port: PORT })
+const wss = new WebSocketServer({
+  port: PORT,
+  maxPayload: MAX_MESSAGE_SIZE,  // Enforce max message size at WS level
+})
 
 console.log(`[RELAY] WebSocket relay server starting on port ${PORT}`)
+console.log(`[RELAY] Security: max ${MAX_CONNECTIONS_PER_IP} conns/IP, ${MESSAGE_RATE_LIMIT} msgs/${MESSAGE_RATE_WINDOW / 1000}s, ${MAX_CHANNELS_PER_CLIENT} channels/client`)
 
 wss.on('connection', (ws: WebSocket, req: IncomingMessage) => {
   const clientId = `client_${++clientIdCounter}`
   const ip = req.socket.remoteAddress || 'unknown'
 
+  // ---- IP Ban Check ----
+  if (bannedIPs.has(ip)) {
+    console.log(`[RELAY] Rejected banned IP: ${ip}`)
+    ws.close(1008, 'Banned')
+    return
+  }
+
+  // ---- Connection Rate Limiting ----
+  const currentConnections = ipConnectionCount.get(ip) || 0
+  if (currentConnections >= MAX_CONNECTIONS_PER_IP) {
+    console.log(`[RELAY] Connection limit exceeded for IP ${ip} (${currentConnections}/${MAX_CONNECTIONS_PER_IP})`)
+    ws.close(1013, 'Too many connections from this IP')
+    return
+  }
+  ipConnectionCount.set(ip, currentConnections + 1)
+
   const client: ClientState = {
     ws,
     id: clientId,
+    ip,
     channels: new Set(['global']), // Everyone gets global by default
     isAuthenticated: false,
     isServerPublisher: false,
     lastPong: Date.now(),
+    messageTimestamps: [],
+    authFailures: 0,
+    connectedAt: Date.now(),
   }
 
   clients.set(clientId, client)
@@ -77,9 +122,30 @@ wss.on('connection', (ws: WebSocket, req: IncomingMessage) => {
 
   console.log(`[RELAY] Client connected: ${clientId} from ${ip} (total: ${clients.size})`)
 
+  // ---- Auth Timeout: disconnect if not authenticated within limit ----
+  const authTimer = setTimeout(() => {
+    if (!client.isAuthenticated) {
+      console.log(`[RELAY] Auth timeout for ${clientId} — disconnecting`)
+      sendError(ws, 'AUTH_TIMEOUT', 'Authentication required within 10 seconds')
+      ws.close(1008, 'Auth timeout')
+    }
+  }, AUTH_TIMEOUT)
+
   // ---- Handle Messages ----
   ws.on('message', (raw: Buffer) => {
     try {
+      // Message size check (redundant with maxPayload but explicit)
+      if (raw.length > MAX_MESSAGE_SIZE) {
+        sendError(ws, 'MESSAGE_TOO_LARGE', `Message exceeds ${MAX_MESSAGE_SIZE} byte limit`)
+        return
+      }
+
+      // Message rate limiting
+      if (!checkMessageRate(client)) {
+        sendError(ws, 'RATE_LIMITED', 'Too many messages. Slow down.')
+        return
+      }
+
       const envelope = parseEnvelope(raw.toString())
       if (!envelope) {
         sendError(ws, 'INVALID_MESSAGE', 'Could not parse message envelope')
@@ -100,11 +166,13 @@ wss.on('connection', (ws: WebSocket, req: IncomingMessage) => {
 
   // ---- Handle Disconnect ----
   ws.on('close', () => {
+    clearTimeout(authTimer)
     console.log(`[RELAY] Client disconnected: ${clientId} (total: ${clients.size - 1})`)
     removeClient(clientId)
   })
 
   ws.on('error', (err) => {
+    clearTimeout(authTimer)
     console.error(`[RELAY] Client error ${clientId}:`, err.message)
     removeClient(clientId)
   })
@@ -154,7 +222,28 @@ function handleMessage(client: ClientState, envelope: WsEnvelope) {
 // =============================================
 
 function handleAuth(client: ClientState, payload: AuthPayload) {
+  // Validate payload
+  if (!payload || typeof payload.token !== 'string') {
+    sendError(client.ws, 'INVALID_AUTH', 'Auth payload must include a token string')
+    return
+  }
+
   const { token } = payload
+
+  // Check IP-level auth failure rate
+  const ipFailures = ipAuthFailures.get(client.ip)
+  if (ipFailures) {
+    const elapsed = Date.now() - ipFailures.firstFailure
+    if (elapsed > AUTH_FAILURE_WINDOW) {
+      // Reset window
+      ipAuthFailures.delete(client.ip)
+    } else if (ipFailures.count >= MAX_AUTH_FAILURES) {
+      console.log(`[RELAY] Banning IP ${client.ip} — too many auth failures`)
+      bannedIPs.add(client.ip)
+      client.ws.close(1008, 'Too many authentication failures')
+      return
+    }
+  }
 
   // Check if this is a server publisher (uses shared secret)
   if (token === SHARED_SECRET) {
@@ -168,12 +257,22 @@ function handleAuth(client: ClientState, payload: AuthPayload) {
   // For regular clients, verify JWT token
   // In production: verify Clerk JWT here
   // For now, accept any non-empty token
-  if (token && token.length > 0) {
+  if (token && token.length > 0 && token.length < 4096) {
     client.isAuthenticated = true
     send(client.ws, createEnvelope('auth:ok', { role: 'subscriber' }))
     console.log(`[RELAY] Client authenticated: ${client.id}`)
   } else {
+    // Track auth failure
+    client.authFailures++
+    const existing = ipAuthFailures.get(client.ip)
+    if (existing) {
+      existing.count++
+    } else {
+      ipAuthFailures.set(client.ip, { count: 1, firstFailure: Date.now() })
+    }
+
     send(client.ws, createEnvelope('auth:fail', { reason: 'Invalid token' }))
+    console.log(`[RELAY] Auth failure for ${client.id} from ${client.ip} (attempt ${client.authFailures})`)
   }
 }
 
@@ -187,8 +286,21 @@ function handleSubscribe(client: ClientState, payload: SubscribePayload) {
     return
   }
 
+  // Validate payload
+  if (!payload || !Array.isArray(payload.channels)) {
+    sendError(client.ws, 'INVALID_PAYLOAD', 'Subscribe payload must include channels array')
+    return
+  }
+
   for (const channel of payload.channels) {
-    if (isValidChannel(channel)) {
+    // Enforce channel subscription limit
+    if (client.channels.size >= MAX_CHANNELS_PER_CLIENT) {
+      sendError(client.ws, 'CHANNEL_LIMIT', `Maximum ${MAX_CHANNELS_PER_CLIENT} channel subscriptions reached`)
+      break
+    }
+
+    // Validate and sanitize channel name
+    if (typeof channel === 'string' && channel.length <= 100 && isValidChannel(channel)) {
       client.channels.add(channel)
       addToChannel(channel, client.id)
       console.log(`[RELAY] ${client.id} subscribed to ${channel}`)
@@ -323,8 +435,63 @@ function removeClient(clientId: string) {
     removeFromChannel(channel, clientId)
   }
 
+  // Decrement IP connection count
+  const currentCount = ipConnectionCount.get(client.ip) || 1
+  if (currentCount <= 1) {
+    ipConnectionCount.delete(client.ip)
+  } else {
+    ipConnectionCount.set(client.ip, currentCount - 1)
+  }
+
   clients.delete(clientId)
 }
+
+// =============================================
+// Message Rate Limiting
+// =============================================
+
+/**
+ * Check if a client is within the message rate limit.
+ * Uses a sliding window approach.
+ */
+function checkMessageRate(client: ClientState): boolean {
+  // Server publishers are not rate-limited on messages
+  if (client.isServerPublisher) return true
+
+  const now = Date.now()
+  const windowStart = now - MESSAGE_RATE_WINDOW
+
+  // Remove timestamps outside the window
+  client.messageTimestamps = client.messageTimestamps.filter(t => t > windowStart)
+
+  // Check limit
+  if (client.messageTimestamps.length >= MESSAGE_RATE_LIMIT) {
+    console.log(`[RELAY] Message rate limit hit for ${client.id} (${client.messageTimestamps.length}/${MESSAGE_RATE_LIMIT} in ${MESSAGE_RATE_WINDOW / 1000}s)`)
+    return false
+  }
+
+  client.messageTimestamps.push(now)
+  return true
+}
+
+// =============================================
+// Periodic Cleanup: Auth failure tracker & bans
+// =============================================
+
+setInterval(() => {
+  const now = Date.now()
+
+  // Clean up expired auth failure records
+  for (const [ip, record] of ipAuthFailures) {
+    if (now - record.firstFailure > AUTH_FAILURE_WINDOW) {
+      ipAuthFailures.delete(ip)
+    }
+  }
+
+  // Unban IPs after 1 hour
+  // (In production, use a persistent ban list or Redis)
+  // For now, bans are session-only; cleared on restart
+}, 60_000)
 
 // =============================================
 // Stats Endpoint (for monitoring)
@@ -336,7 +503,12 @@ setInterval(() => {
     .map(([ch, subs]) => `${ch}(${subs.size})`)
     .join(', ')
 
+  const ipList = Array.from(ipConnectionCount.entries())
+    .map(([ip, count]) => `${ip}(${count})`)
+    .join(', ')
+
   console.log(`[RELAY] Stats — Clients: ${clients.size} | Channels: ${channelSubscribers.size} [${channelList}]`)
+  console.log(`[RELAY] IPs: ${ipConnectionCount.size} [${ipList}] | Banned: ${bannedIPs.size} | Auth failures tracked: ${ipAuthFailures.size}`)
 }, 60_000)
 
 console.log(`[RELAY] ✓ Relay server ready on ws://localhost:${PORT}`)

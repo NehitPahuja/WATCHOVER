@@ -57,15 +57,60 @@ if (process.argv[1]?.includes('digest')) {
   const port = parseInt(process.env.DIGEST_API_PORT || '3001', 10)
 
   import('http').then(({ createServer }) => {
+    // Simple in-memory rate limiter for the standalone server
+    const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
+    const RATE_LIMIT = 60           // 60 requests per minute
+    const RATE_WINDOW = 60_000      // 1 minute window
+
+    function checkRate(ip: string): boolean {
+      const now = Date.now()
+      const entry = rateLimitMap.get(ip)
+      if (!entry || now > entry.resetAt) {
+        rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_WINDOW })
+        return true
+      }
+      entry.count++
+      return entry.count <= RATE_LIMIT
+    }
+
+    // Clean up rate limit entries every 5 minutes
+    setInterval(() => {
+      const now = Date.now()
+      for (const [ip, entry] of rateLimitMap) {
+        if (now > entry.resetAt) rateLimitMap.delete(ip)
+      }
+    }, 300_000)
+
     const server = createServer(async (req, res) => {
+      // Security headers
+      res.setHeader('X-Content-Type-Options', 'nosniff')
+      res.setHeader('X-Frame-Options', 'DENY')
+      res.setHeader('X-XSS-Protection', '1; mode=block')
+      res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains')
+      res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
+
       // CORS
       res.setHeader('Access-Control-Allow-Origin', '*')
       res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-      res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
 
       if (req.method === 'OPTIONS') {
         res.writeHead(204)
         res.end()
+        return
+      }
+
+      // Rate limiting
+      const clientIp = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim()
+        || req.socket.remoteAddress
+        || 'unknown'
+
+      if (!checkRate(clientIp)) {
+        res.writeHead(429, { 'Content-Type': 'application/json' })
+        res.end(JSON.stringify({
+          error: 'Too Many Requests',
+          message: 'Rate limit exceeded. Please try again later.',
+        }))
         return
       }
 

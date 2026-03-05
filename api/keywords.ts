@@ -2,18 +2,22 @@
  * GET /api/keywords
  *
  * Returns top trending keywords from the last 24 hours.
+ *
+ * Security: Public read with rate limiting.
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node'
+import { withSecurity, type SecuredHandler } from '../server/lib/middleware'
+import { sanitizeNumber } from '../server/lib/sanitize'
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+const handler: SecuredHandler = async (req, res) => {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
   try {
     const { limit = '10' } = req.query
-    const parsedLimit = Math.min(parseInt(limit as string, 10) || 10, 50)
+    const parsedLimit = sanitizeNumber(limit, { min: 1, max: 50, default: 10 })
 
     // TODO: Implement when database is provisioned
     // 1. Aggregate keywords from events in last 24h
@@ -29,3 +33,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ error: 'Internal server error' })
   }
 }
+
+export default withSecurity(handler, {
+  rateLimit: 'api',
+  auth: 'none',
+})

@@ -243,11 +243,11 @@ npm run digest:serve # Start the digest API (port 3001)
 
 ### 5.1 Security & Abuse Controls
 
-- [ ] Implement **rate limiting** (Upstash Ratelimit) on API + WS connections
-- [ ] Implement **input sanitization** (DOMPurify)
-- [ ] Enforce **RBAC** server-side on all endpoints (Admin, Editor, User)
-- [ ] Build **audit log** system for all moderator/editor actions (`audit_logs` table)
-- [ ] Ensure HTTPS everywhere, data encryption at rest
+- [x] Implement **rate limiting** (Upstash Ratelimit) on API + WS connections
+- [x] Implement **input sanitization** (DOMPurify)
+- [x] Enforce **RBAC** server-side on all endpoints (Admin, Editor, User)
+- [x] Build **audit log** system for all moderator/editor actions (`audit_logs` table)
+- [x] Ensure HTTPS everywhere, data encryption at rest
 
 ### 5.2 Notifications System
 

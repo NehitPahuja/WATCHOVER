@@ -3,13 +3,22 @@
  *
  * Returns a paginated, filterable list of intelligence events.
  * Uses Redis cache for hot feed, falls back to Postgres.
+ *
+ * Security: Public read with rate limiting.
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node'
+import { withSecurity, type SecuredHandler } from '../../server/lib/middleware'
 import { createDb } from '../../server/db'
 import { getCachedFeed, type EventListParams } from '../../server/services/events'
+import {
+  sanitizeSeverity,
+  sanitizeSentiment,
+  sanitizeString,
+  sanitizeNumber,
+} from '../../server/lib/sanitize'
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+const handler: SecuredHandler = async (req, res) => {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
@@ -24,19 +33,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       cursor,
     } = req.query
 
-    const parsedLimit = Math.min(parseInt(limit as string, 10) || 50, 100)
+    const parsedLimit = sanitizeNumber(limit, { min: 1, max: 100, default: 50 })
 
     const params: EventListParams = {
-      severity: severity as EventListParams['severity'],
-      sentiment: sentiment as EventListParams['sentiment'],
-      region: region as string | undefined,
+      severity: sanitizeSeverity(severity),
+      sentiment: sanitizeSentiment(sentiment),
+      region: region ? sanitizeString(region, { maxLength: 100 }) : undefined,
       since: since as string | undefined,
       limit: parsedLimit,
       cursor: cursor as string | undefined,
     }
 
     const db = createDb()
-    const variant = [severity, sentiment, region].filter(Boolean).join(':') || 'default'
+    const variant = [params.severity, params.sentiment, params.region].filter(Boolean).join(':') || 'default'
     const result = await getCachedFeed(db, variant, params)
 
     // Cache headers for CDN
@@ -48,3 +57,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json({ error: 'Internal server error' })
   }
 }
+
+export default withSecurity(handler, {
+  rateLimit: 'api',
+  auth: 'none',
+})
