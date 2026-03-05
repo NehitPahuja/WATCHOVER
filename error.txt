@@ -1,0 +1,13 @@
+Vercel CLI 46.0.2
+Loading scopes…
+Searching for existing projects…
+Local settings detected in vercel.json:
+- Build Command: npm run build
+- Framework: vite
+- Output Directory: dist
+Merging default Project Settings for Vite. Previously listed overrides are prioritized.
+Auto-detected Project Settings (Vite):
+- Development Command: vite --port $PORT
+- Install Command: `yarn install`, `pnpm install`, `npm install`, or `bun install`
+Error: Project names can be up to 100 characters long and must be lowercase. They can include letters, digits, and the following characters: '.', '_', '-'. However, they cannot contain the sequence '---'. (400)
+Learn More: https://vercel.com/docs/projects/overview#project-name

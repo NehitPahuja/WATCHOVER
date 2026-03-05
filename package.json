@@ -17,7 +17,8 @@
     "ingest:connectors": "npx tsx server/ingestion/connectors.ts",
     "digest:generate": "npx tsx server/scripts/generate-digest.ts",
     "digest:generate:force": "npx tsx server/scripts/generate-digest.ts --force",
-    "digest:serve": "npx tsx server/api/digest.ts"
+    "digest:serve": "npx tsx server/api/digest.ts",
+    "api:dev": "npx tsx server/api/dev-server.ts"
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.61.3",

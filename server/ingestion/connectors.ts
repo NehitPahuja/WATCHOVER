@@ -370,6 +370,14 @@ export async function runAllConnectors(
   const totalIngested = results.reduce((sum, r) => sum + r.ingested, 0) + 1
   console.log(`[CONNECTORS] ✓ Complete. Total ingested: ${totalIngested}`)
 
+  // Invalidate feed cache so API returns fresh data immediately
+  if (totalIngested > 0) {
+    try {
+      const { invalidateFeedCache } = await import('../services/events')
+      await invalidateFeedCache('default')
+    } catch { /* cache invalidation is best-effort */ }
+  }
+
   return results
 }
 

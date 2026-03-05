@@ -357,6 +357,14 @@ export async function fetchAndProcessFeed(
         errors++
       }
     }
+
+    // Invalidate feed cache if we ingested any new events
+    if (ingested > 0) {
+      try {
+        const { invalidateFeedCache } = await import('../services/events')
+        await invalidateFeedCache('default')
+      } catch { /* cache invalidation is best-effort */ }
+    }
   } catch (fetchErr) {
     console.error(`[RSS] ${feedConfig.name}: Fetch error:`, fetchErr)
     errors++

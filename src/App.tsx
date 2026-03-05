@@ -4,6 +4,7 @@ import { DashboardLayout, Navbar, NewsTicker, PulseFeed, InteractiveGlobe, Tensi
 import type { TickerItem, Prediction, MarketEntry, KeywordEntry } from './components'
 import type { WatchEvent } from './types'
 import { useRealtimeDashboard } from './hooks'
+import { useEvents } from './hooks/useQueries'
 import { PredictionsPage } from './pages/PredictionsPage'
 import { AnalyticsPage } from './pages/AnalyticsPage'
 import './App.css'
@@ -247,12 +248,93 @@ function Dashboard() {
     ships: 342,
   })
 
-  // Merge realtime events with mock data (realtime first)
+  // ---- Fetch real events from database API ----
+  const { data: apiResponse } = useEvents(
+    { limit: 50 },
+    { refetchInterval: 30_000 }  // Re-fetch every 30s
+  )
+
+  // Convert API events to WatchEvent format
+  const apiEvents = useMemo((): WatchEvent[] => {
+    if (!apiResponse?.data?.length) return []
+
+    return apiResponse.data.map((e) => {
+      // Calculate relative time
+      const now = Date.now()
+      const published = new Date(e.publishedAt).getTime()
+      const diffMs = now - published
+      const diffMin = Math.floor(diffMs / 60_000)
+      const diffHr = Math.floor(diffMs / 3_600_000)
+      let timeAgo: string
+      if (diffMin < 1) timeAgo = 'Just now'
+      else if (diffMin < 60) timeAgo = `${diffMin}m ago`
+      else if (diffHr < 24) timeAgo = `${diffHr}h ago`
+      else timeAgo = `${Math.floor(diffHr / 24)}d ago`
+
+      return {
+        id: e.id,
+        title: e.title,
+        summary: e.summary || '',
+        region: e.region || 'Global',
+        country: e.country || e.region || 'Unknown',
+        countryCode: e.countryCode || '',
+        countryFlag: getCountryFlag(e.countryCode) || '🌍',
+        lat: e.lat || 0,
+        lng: e.lng || 0,
+        severity: e.severity,
+        sentiment: e.sentiment,
+        confidence: e.confidence,
+        category: e.category || 'General',
+        sources: (e.sourceRefs || []).map(url => ({
+          name: extractSourceName(url),
+          url,
+          credibility: 80,
+        })),
+        activityCount24h: 0,
+        publishedAt: e.publishedAt,
+        timeAgo,
+      }
+    })
+  }, [apiResponse])
+
+  // Merge: realtime WS events first → API events → fallback to mocks
   const allEvents = useMemo(() => {
-    const existingIds = new Set(MOCK_EVENTS.map(e => e.id))
-    const newEvents = realtimeEvents.filter(e => !existingIds.has(e.id))
-    return [...newEvents, ...MOCK_EVENTS]
-  }, [realtimeEvents])
+    const seenIds = new Set<string>()
+    const result: WatchEvent[] = []
+
+    // 1. Realtime events first (newest)
+    for (const e of realtimeEvents) {
+      if (!seenIds.has(e.id)) {
+        seenIds.add(e.id)
+        result.push(e)
+      }
+    }
+
+    // 2. API events (from database)
+    for (const e of apiEvents) {
+      if (!seenIds.has(e.id)) {
+        seenIds.add(e.id)
+        result.push(e)
+      }
+    }
+
+    // 3. Only use mock events as fallback if we have nothing from the API
+    if (result.length === 0) {
+      return MOCK_EVENTS
+    }
+
+    return result
+  }, [realtimeEvents, apiEvents])
+
+  // Create ticker items from real events
+  const tickerItems = useMemo((): TickerItem[] => {
+    if (allEvents.length === 0) return MOCK_TICKER_ITEMS
+    return allEvents.slice(0, 12).map(e => ({
+      id: e.id,
+      text: e.title,
+      severity: e.severity === 'critical' ? 'high' : e.severity,
+    }))
+  }, [allEvents])
 
   return (
     <DashboardLayout
@@ -263,7 +345,7 @@ function Dashboard() {
         />
       }
       ticker={
-        <NewsTicker items={MOCK_TICKER_ITEMS} speed={45} />
+        <NewsTicker items={tickerItems} speed={45} />
       }
       leftPanel={
         <>
@@ -281,6 +363,27 @@ function Dashboard() {
     />
   )
 }
+
+// Helper: Extract source name from URL
+function extractSourceName(url: string): string {
+  try {
+    const hostname = new URL(url).hostname
+    return hostname.replace('www.', '').split('.')[0]
+  } catch {
+    return 'Source'
+  }
+}
+
+// Helper: Get flag emoji from country code
+function getCountryFlag(code: string | null): string {
+  if (!code || code.length < 2) return '🌍'
+  const codeUpper = code.toUpperCase().slice(0, 2)
+  const offset = 127397
+  return String.fromCodePoint(
+    ...Array.from(codeUpper).map(c => c.charCodeAt(0) + offset)
+  )
+}
+
 
 function App() {
   return (

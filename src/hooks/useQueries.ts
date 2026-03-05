@@ -174,17 +174,9 @@ export function handleRealtimeMessage(
 ) {
   switch (envelope.type) {
     case 'events:new':
-      // Prepend new event to the list cache
-      queryClient.setQueriesData<EventsListResponse>(
-        { queryKey: queryKeys.events.all },
-        (old) => {
-          if (!old) return old
-          return {
-            ...old,
-            data: [envelope.payload as EventsListResponse['data'][0], ...old.data],
-          }
-        }
-      )
+      // The dashboard state shows the new event instantly from the WebSocket payload.
+      // We invalidate the events cache so the full DB record is fetched in the background.
+      queryClient.invalidateQueries({ queryKey: queryKeys.events.all })
       break
 
     case 'events:update':
