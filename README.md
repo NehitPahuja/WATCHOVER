@@ -52,7 +52,6 @@ The project may use technologies such as:
 
 * **Programming Language:** TypeScript / CSS
 * **Frameworks:** Node.js / React 
-* **AI / ML:** Detection Models
 * **Database:** Neon / PostgreSQL
 * **Tools:** APIs
 
@@ -119,7 +118,6 @@ WATCHOVER can be applied in areas such as:
 # 🔮 Future Improvements
 
 * AI-based threat detection
-* Edge-device integration
 * Mobile notifications
 * Cloud dashboard
 * Multi-camera monitoring
