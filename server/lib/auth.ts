@@ -55,8 +55,13 @@ export function hasPermission(role: UserRole, permission: Permission): boolean {
  *   if (!hasPermission(session.role, 'predictions:vote'))
  *     return new Response('Forbidden', { status: 403 })
  */
-export async function verifyAuth(request: Request): Promise<AuthSession | null> {
-  const authHeader = request.headers.get('Authorization')
+export async function verifyAuth(request: any): Promise<AuthSession | null> {
+  const getHeader = (name: string) => 
+    typeof request.headers?.get === 'function' 
+      ? request.headers.get(name) || request.headers.get(name.toLowerCase()) 
+      : request.headers?.[name.toLowerCase()]
+
+  const authHeader = getHeader('Authorization') as string | undefined
   if (!authHeader?.startsWith('Bearer ')) return null
 
   const token = authHeader.slice(7)

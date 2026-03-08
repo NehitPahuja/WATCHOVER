@@ -31,6 +31,9 @@ const routes: Record<string, () => Promise<any>> = {
   '/api/keywords': () => import('../../api/keywords.js'),
   '/api/layers': () => import('../../api/layers.js'),
   '/api/audit-logs': () => import('../../api/audit-logs.js'),
+  '/api/notifications': () => import('../../api/notifications/index.js'),
+  '/api/notifications/preferences': () => import('../../api/notifications/preferences.js'),
+  '/api/notifications/[id]/read': () => import('../../api/notifications/[id]/read.js'),
   '/api/digest': () => import('./digest.js').then(m => ({
     default: async (req: any, res: any) => {
       if (req.method === 'GET') {
@@ -92,6 +95,9 @@ const server = createServer(async (req: IncomingMessage, res: ServerResponse) =>
   } else if (path.startsWith('/api/predictions/') && path.split('/').length === 4) {
     vReq.query.id = path.split('/')[3]
     matchedHandler = await routes['/api/predictions/[id]']()
+  } else if (path.startsWith('/api/notifications/') && path.endsWith('/read')) {
+    vReq.query.id = path.split('/')[3]
+    matchedHandler = await routes['/api/notifications/[id]/read']()
   }
 
   if (matchedHandler) {

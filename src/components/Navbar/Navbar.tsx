@@ -1,5 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '@clerk/clerk-react'
+import { useNotifications } from '../../hooks/useNotifications'
+import { NotificationsPanel } from '../NotificationsPanel/NotificationsPanel'
 import { LiveIndicator } from '../LiveIndicator'
 import { AnimatedCounter } from '../AnimatedCounter'
 import { Button } from '../Button'
@@ -21,7 +24,12 @@ const Navbar: React.FC<NavbarProps> = ({
   onSignInClick,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [notificationsOpen, setNotificationsOpen] = useState(false)
   const navigate = useNavigate()
+  const { isSignedIn } = useAuth()
+  const { data: notifications = [] } = useNotifications(false, { enabled: !!isSignedIn })
+  const safeNotifications = Array.isArray(notifications) ? notifications : []
+  const unreadCount = safeNotifications.filter((n) => !n.isRead).length
 
   return (
     <nav className="wo-navbar" id="navbar">
@@ -76,13 +84,18 @@ const Navbar: React.FC<NavbarProps> = ({
           Sign In
         </Button>
 
-        <button className="wo-navbar__activity-pulse" aria-label="Activity notifications">
-          <span className="wo-navbar__activity-dot" />
+        <button 
+          className="wo-navbar__activity-pulse" 
+          aria-label="Activity notifications"
+          onClick={() => setNotificationsOpen(true)}
+        >
+          {unreadCount > 0 && <span className="wo-navbar__activity-dot" />}
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
             <path d="M13.73 21a2 2 0 0 1-3.46 0" />
           </svg>
         </button>
+        <NotificationsPanel isOpen={notificationsOpen} onClose={() => setNotificationsOpen(false)} />
       </div>
 
       {/* Mobile hamburger */}

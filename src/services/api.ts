@@ -163,3 +163,66 @@ export function castVote(predictionId: string, side: 'yes' | 'no', token: string
     body: JSON.stringify({ side }),
   })
 }
+
+// =============================================
+// Notifications API
+// =============================================
+
+export interface ApiNotification {
+  id: string
+  userId: string
+  type: 'event_alert' | 'prediction_status' | 'system_alert'
+  title: string
+  message: string
+  link: string | null
+  isRead: boolean
+  metadata: Record<string, unknown>
+  createdAt: string
+}
+
+export interface ApiNotificationPreferences {
+  eventAlerts: boolean
+  predictionUpdates: boolean
+  systemAlerts: boolean
+  watchedRegions: string[]
+}
+
+/** Fetch user notifications */
+export function fetchNotifications(token: string, unreadOnly = false): Promise<ApiNotification[]> {
+  return apiFetch<ApiNotification[]>(`/notifications${unreadOnly ? '?unread=true' : ''}`, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+}
+
+/** Mark all notifications as read */
+export function markAllNotificationsRead(token: string): Promise<{ success: boolean }> {
+  return apiFetch<{ success: boolean }>(`/notifications`, {
+    method: 'PATCH',
+    headers: { Authorization: `Bearer ${token}` }
+  })
+}
+
+/** Mark a single notification as read */
+export function markNotificationRead(id: string, token: string): Promise<ApiNotification> {
+  return apiFetch<ApiNotification>(`/notifications/${id}/read`, {
+    method: 'PATCH',
+    headers: { Authorization: `Bearer ${token}` }
+  })
+}
+
+/** Fetch notification preferences */
+export function fetchNotificationPreferences(token: string): Promise<ApiNotificationPreferences> {
+  return apiFetch<ApiNotificationPreferences>('/notifications/preferences', {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+}
+
+/** Update notification preferences */
+export function updateNotificationPreferences(token: string, data: Partial<ApiNotificationPreferences>): Promise<ApiNotificationPreferences> {
+  return apiFetch<ApiNotificationPreferences>('/notifications/preferences', {
+    method: 'PUT',
+    headers: { Authorization: `Bearer ${token}` },
+    body: JSON.stringify(data)
+  })
+}
+

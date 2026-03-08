@@ -21,6 +21,7 @@ export const predictionStatusEnum = pgEnum('prediction_status', ['active', 'clos
 export const voteSideEnum = pgEnum('vote_side', ['yes', 'no'])
 export const subscriptionTierEnum = pgEnum('subscription_tier', ['free', 'analyst', 'command'])
 export const subscriptionStatusEnum = pgEnum('subscription_status', ['active', 'cancelled', 'past_due', 'trialing'])
+export const notificationTypeEnum = pgEnum('notification_type', ['event_alert', 'prediction_status', 'system_alert'])
 
 // =============================================
 // Users & Organizations
@@ -143,6 +144,32 @@ export const subscriptions = pgTable('subscriptions', {
   currentPeriodStart: timestamp('current_period_start', { withTimezone: true }),
   currentPeriodEnd: timestamp('current_period_end', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+})
+
+// =============================================
+// Notifications
+// =============================================
+
+export const notifications = pgTable('notifications', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  type: notificationTypeEnum('type').notNull(),
+  title: varchar('title', { length: 255 }).notNull(),
+  message: text('message').notNull(),
+  link: text('link'),
+  isRead: boolean('is_read').notNull().default(false),
+  metadata: jsonb('metadata').$type<Record<string, unknown>>().default({}),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+})
+
+export const notificationPreferences = pgTable('notification_preferences', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').notNull().unique().references(() => users.id, { onDelete: 'cascade' }),
+  eventAlerts: boolean('event_alerts').notNull().default(true),
+  predictionUpdates: boolean('prediction_updates').notNull().default(true),
+  systemAlerts: boolean('system_alerts').notNull().default(true),
+  watchedRegions: jsonb('watched_regions').$type<string[]>().default([]),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 })
 

@@ -57,6 +57,9 @@ export type AuditAction =
   | 'layer:toggle'
   // Digest actions
   | 'digest:regenerate'
+  // Notification actions
+  | 'notification:mark_read'
+  | 'notification:update_preferences'
   // Analytics actions
   | 'analytics:export'
   // Auth actions
@@ -73,6 +76,7 @@ export type AuditEntityType =
   | 'user'
   | 'layer'
   | 'digest'
+  | 'notification'
   | 'analytics'
   | 'system'
 

@@ -1,0 +1,204 @@
+.wo-notifications {
+  position: absolute;
+  top: 60px;
+  right: 20px;
+  width: 380px;
+  max-height: 500px;
+  background: var(--bg-surface-elevated, #1A1A1A);
+  border: 1px solid var(--border-soft, #333);
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: var(--text-primary, #FFF);
+}
+
+.wo-notifications__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-soft, #333);
+  background: var(--bg-surface, #121212);
+  padding: 0 16px;
+}
+
+.wo-notifications__tabs {
+  display: flex;
+  gap: 16px;
+}
+
+.wo-notifications__tab {
+  background: none;
+  border: none;
+  color: var(--text-secondary, #999);
+  padding: 16px 0;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wo-notifications__tab.active {
+  color: var(--text-primary, #FFF);
+}
+
+.wo-notifications__tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--signal-blue, #2CA8FF);
+}
+
+.wo-notifications__badge {
+  background: var(--signal-red, #FF3B3B);
+  color: white;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 0 4px;
+}
+
+.wo-notifications__close {
+  background: none;
+  border: none;
+  color: var(--text-secondary, #999);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 8px;
+}
+
+.wo-notifications__close:hover {
+  color: var(--text-primary, #FFF);
+}
+
+.wo-notifications__content {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.wo-notifications__actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-soft, #333);
+}
+
+.wo-notifications__title {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--text-secondary, #999);
+  letter-spacing: 0.5px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.wo-notifications__empty {
+  padding: 32px 16px;
+  text-align: center;
+  color: var(--text-tertiary, #666);
+  font-size: 14px;
+}
+
+.wo-notifications__list {
+  display: flex;
+  flex-direction: column;
+}
+
+.wo-notifications__item {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.wo-notifications__item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.wo-notifications__item--unread {
+  background: rgba(44, 168, 255, 0.05);
+}
+
+.wo-notifications__item--unread .wo-notifications__item-title {
+  color: var(--text-primary, #FFF);
+  font-weight: 500;
+}
+
+.wo-notifications__item-icon {
+  font-size: 16px;
+  margin-top: 2px;
+}
+
+.wo-notifications__item-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.wo-notifications__item-title {
+  font-size: 14px;
+  color: var(--text-secondary, #999);
+}
+
+.wo-notifications__item-message {
+  font-size: 13px;
+  color: var(--text-tertiary, #666);
+  line-height: 1.4;
+}
+
+.wo-notifications__item-time {
+  font-size: 11px;
+  color: var(--text-tertiary, #666);
+  margin-top: 4px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.wo-notifications__settings {
+  display: flex;
+  flex-direction: column;
+}
+
+.wo-notifications__settings > .wo-notifications__title {
+  padding: 16px;
+  border-bottom: 1px solid var(--border-soft, #333);
+}
+
+.wo-notifications__settings-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.wo-notifications__setting {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.wo-notifications__setting input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--signal-blue, #2CA8FF);
+  cursor: pointer;
+}

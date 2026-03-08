@@ -251,13 +251,13 @@ npm run digest:serve # Start the digest API (port 3001)
 
 ### 5.2 Notifications System
 
-- [ ] Build **in-app notifications** with real-time badge indicator
-- [ ] Implement notification triggers:
+- [x] Build **in-app notifications** with real-time badge indicator
+- [x] Implement notification triggers:
   - New event in watched region
   - Prediction status changed
   - SLA breach (if case management features included)
-- [ ] Add notification preferences per user
-- [ ] Mark as read functionality
+- [x] Add notification preferences per user
+- [x] Mark as read functionality
 
 ### 5.3 Micro-Interactions & Polish
 
