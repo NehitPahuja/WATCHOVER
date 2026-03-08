@@ -1,202 +1,244 @@
 /* =============================================
-   Navbar Component Styles
+   Navbar Component Styles — Command Center Redesign
    Design Doc §4 — Top Navigation Bar
    ============================================= */
 
 .wo-navbar {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   height: var(--nav-height);
-  padding: 0 var(--spacing-lg);
-  background: var(--bg-secondary);
-  gap: var(--spacing-md);
+  padding: 0 var(--spacing-xl);
+  background: rgba(10, 10, 12, 0.9);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 59, 59, 0.1);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  gap: var(--spacing-lg);
 }
 
-/* ---- Left Section ---- */
+/* ---- Section 1: LEFT (Identity) ---- */
 .wo-navbar__left {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-  flex-shrink: 0;
-}
-
-/* Logo */
-.wo-navbar__logo {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  text-decoration: none;
-  color: var(--text-primary);
-  transition: opacity var(--transition-fast);
-}
-
-.wo-navbar__logo:hover {
-  opacity: 0.85;
-  color: var(--text-primary);
-}
-
-.wo-navbar__logo-icon {
-  font-size: 22px;
-  color: var(--signal-red);
-  filter: drop-shadow(0 0 6px rgba(255, 59, 59, 0.4));
-}
-
-.wo-navbar__logo-text {
-  font-family: var(--font-heading);
-  font-size: 16px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-/* Divider */
-.wo-navbar__divider {
-  width: 1px;
-  height: 24px;
-  background: var(--border-light);
-  flex-shrink: 0;
-}
-
-/* Counters */
-.wo-navbar__counters {
   display: flex;
   align-items: center;
   gap: var(--spacing-lg);
 }
 
-.wo-navbar__counter {
+.wo-navbar__logo {
   display: flex;
-  align-items: baseline;
-  gap: 6px;
+  align-items: center;
+  gap: var(--spacing-sm);
+  text-decoration: none;
+  font-family: var(--font-heading);
 }
 
-.wo-navbar__counter-value {
-  font-family: var(--font-mono);
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 1;
+.wo-navbar__logo-icon {
+  font-size: 20px;
+  color: var(--signal-red);
+  filter: drop-shadow(0 0 8px rgba(255, 59, 59, 0.5));
 }
 
-.wo-navbar__counter-label {
-  font-size: var(--text-micro);
-  color: var(--text-muted);
+.wo-navbar__logo-text {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  color: var(--text-primary);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  white-space: nowrap;
 }
 
-/* ---- Right Section ---- */
+.wo-navbar__status {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.wo-navbar__clock {
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+}
+
+/* ---- Section 2: CENTER (Navigation) ---- */
+.wo-navbar__center {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 4px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+}
+
+.wo-navbar__nav-link {
+  background: none;
+  border: none;
+  padding: 8px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.wo-navbar__nav-link:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.wo-navbar__nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--signal-red);
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.wo-navbar__nav-link:hover::after {
+  width: 12px;
+  box-shadow: 0 0 10px var(--signal-red);
+}
+
+/* ---- Section 3: RIGHT (Telemetry) ---- */
 .wo-navbar__right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--spacing-lg);
+}
+
+.wo-navbar__telemetry {
+  display: flex;
+  gap: var(--spacing-md);
+  padding-right: var(--spacing-md);
+  border-right: 1px solid var(--border-subtle);
+}
+
+.wo-navbar__telemetry-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.wo-navbar__telemetry-label {
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+.wo-navbar__telemetry-value {
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.wo-navbar__actions {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
 }
 
-/* Activity Pulse Bell */
+/* Notification Bell Refinement */
 .wo-navbar__activity-pulse {
   position: relative;
   background: none;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   color: var(--text-secondary);
-  padding: 6px;
+  width: 36px;
+  height: 36px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all var(--transition-fast);
-  width: 34px;
-  height: 34px;
+  transition: all var(--transition-normal);
 }
 
 .wo-navbar__activity-pulse:hover {
-  background: var(--bg-hover);
-  border-color: var(--border-hover);
-  color: var(--text-primary);
+  border-color: var(--signal-red);
+  color: var(--signal-red);
+  background: rgba(255, 59, 59, 0.05);
+  box-shadow: 0 0 15px rgba(255, 59, 59, 0.1);
 }
 
 .wo-navbar__activity-dot {
   position: absolute;
-  top: 5px;
-  right: 5px;
-  width: 7px;
-  height: 7px;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
   background: var(--signal-red);
   border-radius: 50%;
-  border: 1.5px solid var(--bg-secondary);
-  animation: pulse-live 2s ease-in-out infinite;
+  border: 2px solid #0a0a0c;
+  box-shadow: 0 0 8px var(--signal-red);
 }
 
-/* ---- Mobile Hamburger ---- */
+/* ---- Mobile Menu ---- */
 .wo-navbar__hamburger {
   display: none;
-  flex-direction: column;
-  gap: 4px;
   background: none;
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  padding: 7px 6px;
+  border: none;
   cursor: pointer;
+  padding: 10px;
 }
 
 .wo-navbar__hamburger span {
   display: block;
-  width: 18px;
+  width: 20px;
   height: 2px;
-  background: var(--text-secondary);
+  background: var(--text-primary);
+  margin: 4px 0;
   border-radius: 1px;
-  transition: all var(--transition-fast);
 }
 
-/* ---- Responsive ---- */
-@media (max-width: 1024px) {
-  .wo-navbar__counters {
-    gap: var(--spacing-md);
+/* ---- Responsive Adjustments ---- */
+@media (max-width: 1200px) {
+  .wo-navbar {
+    grid-template-columns: auto 1fr;
+    padding: 0 var(--spacing-md);
   }
-
-  .wo-navbar__counter-label {
+  .wo-navbar__center {
     display: none;
   }
 }
 
 @media (max-width: 768px) {
-  .wo-navbar {
-    padding: 0 var(--spacing-md);
-  }
-
-  .wo-navbar__counters {
+  .wo-navbar__telemetry {
     display: none;
   }
-
-  .wo-navbar__divider {
-    display: none;
-  }
-
   .wo-navbar__hamburger {
-    display: flex;
+    display: block;
   }
-
   .wo-navbar__right {
     display: none;
-    position: absolute;
+    position: fixed;
     top: var(--nav-height);
     left: 0;
     right: 0;
-    background: var(--bg-secondary);
-    border-bottom: 1px solid var(--border-subtle);
+    bottom: 0;
+    background: var(--bg-primary);
     flex-direction: column;
-    padding: var(--spacing-md);
-    gap: var(--spacing-sm);
-    z-index: 99;
+    padding: var(--spacing-xl);
+    justify-content: flex-start;
+    align-items: stretch;
+    z-index: 1001;
   }
-
   .wo-navbar__right--open {
     display: flex;
   }
-
-  .wo-navbar__right .wo-btn {
+  .wo-navbar__actions {
+    flex-direction: column;
+  }
+  .wo-navbar__actions .wo-btn {
     width: 100%;
-    justify-content: center;
   }
 }
