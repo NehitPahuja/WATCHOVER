@@ -13,7 +13,6 @@ interface NavbarProps {
   tensions?: number
   onLiveViewClick?: () => void
   onSubscribeClick?: () => void
-  onSignInClick?: () => void
 }
 
 const Navbar: React.FC<NavbarProps> = ({
@@ -21,7 +20,6 @@ const Navbar: React.FC<NavbarProps> = ({
   tensions = 0,
   onLiveViewClick,
   onSubscribeClick,
-  onSignInClick,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [notificationsOpen, setNotificationsOpen] = useState(false)

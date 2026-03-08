@@ -22,11 +22,13 @@
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.61.3",
+    "@clerk/themes": "^2.4.57",
     "@deck.gl/aggregation-layers": "^9.2.10",
     "@deck.gl/core": "^9.2.10",
     "@deck.gl/layers": "^9.2.10",
     "@deck.gl/mapbox": "^9.2.10",
     "@deck.gl/react": "^9.2.10",
+    "@deck.gl/widgets": "^9.2.11",
     "@neondatabase/serverless": "^1.0.2",
     "@sentry/react": "^10.40.0",
     "@tanstack/react-query": "^5.90.21",

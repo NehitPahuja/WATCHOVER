@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ClerkProvider } from '@clerk/clerk-react'
+import { dark } from '@clerk/themes'
 import App from './App.tsx'
 import './index.css'
 
@@ -24,7 +25,21 @@ if (!PUBLISHABLE_KEY) {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
+    <ClerkProvider 
+      publishableKey={PUBLISHABLE_KEY} 
+      afterSignOutUrl="/"
+      appearance={{
+        baseTheme: dark,
+        variables: {
+          colorPrimary: '#ff3b3b',
+          colorBackground: '#0a0a0c',
+          colorInputBackground: '#131316',
+          colorInputText: '#e5e7eb',
+          colorTextOnPrimaryBackground: '#ffffff',
+          colorTextSecondary: '#a1a1aa'
+        }
+      }}
+    >
       <BrowserRouter>
         <QueryClientProvider client={queryClient}>
           <App />
