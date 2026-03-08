@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '@clerk/clerk-react'
+import { useAuth, SignInButton } from '@clerk/clerk-react'
 import { useNotifications } from '../../hooks/useNotifications'
 import { NotificationsPanel } from '../NotificationsPanel/NotificationsPanel'
 import { LiveIndicator } from '../LiveIndicator'
@@ -26,7 +26,7 @@ const Navbar: React.FC<NavbarProps> = ({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [notificationsOpen, setNotificationsOpen] = useState(false)
   const navigate = useNavigate()
-  const { isSignedIn } = useAuth()
+  const { isSignedIn, signOut } = useAuth()
   const { data: notifications = [] } = useNotifications(false, { enabled: !!isSignedIn })
   const safeNotifications = Array.isArray(notifications) ? notifications : []
   const unreadCount = safeNotifications.filter((n) => !n.isRead).length
@@ -80,9 +80,17 @@ const Navbar: React.FC<NavbarProps> = ({
         <Button variant="cta" size="sm" onClick={onSubscribeClick}>
           Subscribe
         </Button>
-        <Button variant="ghost" size="sm" onClick={onSignInClick}>
-          Sign In
-        </Button>
+        {!isSignedIn ? (
+          <SignInButton mode="modal">
+            <Button variant="ghost" size="sm">
+              Sign In
+            </Button>
+          </SignInButton>
+        ) : (
+          <Button variant="ghost" size="sm" onClick={() => signOut()}>
+            Sign Out
+          </Button>
+        )}
 
         <button 
           className="wo-navbar__activity-pulse" 
