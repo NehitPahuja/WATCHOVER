@@ -55,9 +55,26 @@
 }
 
 .wo-navbar__clock {
-  font-size: 11px;
+  font-size: 13px;
+  color: var(--text-primary);
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wo-navbar__time-zulu {
   color: var(--text-muted);
-  letter-spacing: 0.1em;
+  font-size: 9px;
+  border-left: 1px solid var(--border-subtle);
+  padding-left: 8px;
+  text-transform: uppercase;
+  margin-top: 1px;
+}
+
+.wo-navbar__time-local {
+  font-weight: 700;
+  color: #fff;
 }
 
 /* ---- Section 2: CENTER (Navigation) ---- */

@@ -31,8 +31,15 @@ const Navbar: React.FC<NavbarProps> = ({
     return () => clearInterval(timer)
   }, [])
 
-  const formatZuluTime = (date: Date) => {
-    return date.toISOString().slice(11, 19) + ' Z'
+  const formatTime = (date: Date) => {
+    const local = date.toLocaleTimeString([], { 
+      hour12: false, 
+      hour: '2-digit', 
+      minute: '2-digit', 
+      second: '2-digit' 
+    })
+    const zulu = date.toISOString().slice(11, 16)
+    return { local, zulu }
   }
 
   const navigate = useNavigate()
@@ -50,7 +57,10 @@ const Navbar: React.FC<NavbarProps> = ({
           <span className="wo-navbar__logo-text">WATCHOVER</span>
         </a>
         <div className="wo-navbar__status">
-          <div className="wo-navbar__clock mono">{formatZuluTime(currentTime)}</div>
+          <div className="wo-navbar__clock mono">
+            <span className="wo-navbar__time-local">{formatTime(currentTime).local}</span>
+            <span className="wo-navbar__time-zulu">{formatTime(currentTime).zulu}Z</span>
+          </div>
           <LiveIndicator size="sm" />
         </div>
       </div>
