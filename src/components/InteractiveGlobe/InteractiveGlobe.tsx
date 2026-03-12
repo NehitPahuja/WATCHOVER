@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import Map from 'react-map-gl/maplibre'
 import DeckGL from '@deck.gl/react'
-import { ScatterplotLayer, SolidPolygonLayer } from '@deck.gl/layers'
+import { ScatterplotLayer } from '@deck.gl/layers'
 import { HeatmapLayer } from '@deck.gl/aggregation-layers'
 import { _GlobeView as GlobeView, type MapViewState } from '@deck.gl/core'
 import type { WatchEvent } from '../../types'
@@ -85,6 +85,21 @@ const InteractiveGlobe: React.FC<InteractiveGlobeProps> = ({
   // Layers Configuration
   // =============================================
 
+  const isVisible = (eventLat: number, eventLng: number) => {
+    const viewLat = viewState.latitude || 0
+    const viewLng = viewState.longitude || 0
+    const p = Math.PI / 180
+    
+    const lat1 = viewLat * p
+    const lat2 = eventLat * p
+    const dLng = (eventLng - viewLng) * p
+    
+    const cosAngle = Math.sin(lat1) * Math.sin(lat2) + Math.cos(lat1) * Math.cos(lat2) * Math.cos(dLng)
+    
+    // The exact horizon is 0, but using 0.05 hides the marker just prior to visual distortion on the edge
+    return cosAngle > 0.05
+  }
+
   const layers = useMemo(() => {
     // 1. Scatterplot Layer for events
     const scatterLayer = new ScatterplotLayer<WatchEvent>({
@@ -92,17 +107,20 @@ const InteractiveGlobe: React.FC<InteractiveGlobeProps> = ({
       data: events.filter(e => e.lat != null && e.lng != null),
       getPosition: d => [d.lng!, d.lat!],
       getFillColor: d => {
+        if (!isVisible(d.lat!, d.lng!)) return [0, 0, 0, 0]
         if (d.sentiment === 'escalation') return [255, 30, 30, 200]
         if (d.sentiment === 'de-escalation') return [0, 255, 133, 200]
         return [255, 200, 87, 200]
       },
       getLineColor: d => {
+        if (!isVisible(d.lat!, d.lng!)) return [0, 0, 0, 0]
         if (d.sentiment === 'escalation') return [255, 30, 30, 255]
         if (d.sentiment === 'de-escalation') return [0, 255, 133, 255]
         return [255, 200, 87, 255]
       },
       // Scale markers based on zoom Level for globe projection
       getRadius: d => {
+        if (!isVisible(d.lat!, d.lng!)) return 0
         const baseRadius = 50000; // 50km base pulse
         const zoomFactor = Math.pow(1.5, -(viewState.zoom || 0));
         return baseRadius * zoomFactor * (d.confidence / 50);
@@ -123,7 +141,12 @@ const InteractiveGlobe: React.FC<InteractiveGlobeProps> = ({
       }),
       parameters: {
         depthTest: true
-      } as any
+      } as any,
+      updateTriggers: {
+        getFillColor: [viewState.longitude, viewState.latitude],
+        getLineColor: [viewState.longitude, viewState.latitude],
+        getRadius: [viewState.longitude, viewState.latitude, viewState.zoom]
+      }
     })
 
     const scatterGlowLayer = new ScatterplotLayer<WatchEvent>({
@@ -131,11 +154,13 @@ const InteractiveGlobe: React.FC<InteractiveGlobeProps> = ({
       data: events.filter(e => e.lat != null && e.lng != null),
       getPosition: d => [d.lng!, d.lat!],
       getFillColor: d => {
+        if (!isVisible(d.lat!, d.lng!)) return [0, 0, 0, 0]
         if (d.sentiment === 'escalation') return [255, 30, 30, 60]
         if (d.sentiment === 'de-escalation') return [0, 255, 133, 60]
         return [255, 200, 87, 60]
       },
       getRadius: d => {
+        if (!isVisible(d.lat!, d.lng!)) return 0
         const baseRadius = 80000; // 80km base pulse for glow
         const zoomFactor = Math.pow(1.5, -(viewState.zoom || 0));
         return baseRadius * zoomFactor * (d.confidence / 50);
@@ -148,7 +173,11 @@ const InteractiveGlobe: React.FC<InteractiveGlobeProps> = ({
       pickable: false,
       parameters: {
         depthTest: true
-      } as any
+      } as any,
+      updateTriggers: {
+        getFillColor: [viewState.longitude, viewState.latitude],
+        getRadius: [viewState.longitude, viewState.latitude, viewState.zoom]
+      }
     })
 
     // 2. Optional Heatmap Layer for density
@@ -156,7 +185,7 @@ const InteractiveGlobe: React.FC<InteractiveGlobeProps> = ({
       id: 'event-heatmap',
       data: events.filter(e => e.lat != null && e.lng != null),
       getPosition: d => [d.lng!, d.lat!],
-      getWeight: d => (d.severity === 'critical' ? 5 : d.severity === 'high' ? 3 : 1),
+      getWeight: d => isVisible(d.lat!, d.lng!) ? (d.severity === 'critical' ? 5 : d.severity === 'high' ? 3 : 1) : 0,
       radiusPixels: 45,
       intensity: 1.5,
       threshold: 0.1,
@@ -166,31 +195,18 @@ const InteractiveGlobe: React.FC<InteractiveGlobeProps> = ({
         [255, 200, 87, 150],
         [255, 30, 30, 200],
       ],
-      visible: showHeatmap || (viewState.zoom || 0) < 3.5
-    })
-
-    // Occluder polygon to provide depth for the globe so backside markers are hidden
-    // We use a nearly transparent color so the base map still shows through, but
-    // it writes to the depth buffer for Deck's own markers.
-    const occluderLayer = new SolidPolygonLayer({
-      id: 'globe-depth-occluder',
-      data: [{ polygon: [[-180, 90], [180, 90], [180, -90], [-180, -90]] }],
-      getPolygon: d => d.polygon,
-      getFillColor: [0, 0, 0, 1], // almost transparent but writes to depth
-      parameters: {
-        depthTest: true,
-        depthWrite: true,
-        colorMask: [false, false, false, false] // don't write color, only depth
-      } as any
+      visible: showHeatmap || (viewState.zoom || 0) < 3.5,
+      updateTriggers: {
+        getWeight: [viewState.longitude, viewState.latitude]
+      }
     })
 
     return [
-      occluderLayer,
       showHeatmap || (viewState.zoom || 0) < 3.5 ? heatmapLayer : null,
       (viewState.zoom || 0) >= 1.5 ? scatterGlowLayer : null,
       (viewState.zoom || 0) >= 1.5 ? scatterLayer : null
     ].filter(Boolean)
-  }, [events, onEventClick, showHeatmap, viewState.zoom])
+  }, [events, onEventClick, showHeatmap, viewState.zoom, viewState.longitude, viewState.latitude])
 
   // =============================================
   // Render
