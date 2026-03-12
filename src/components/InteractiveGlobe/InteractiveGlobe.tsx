@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import Map from 'react-map-gl/maplibre'
 import DeckGL from '@deck.gl/react'
-import { ScatterplotLayer } from '@deck.gl/layers'
+import { ScatterplotLayer, SolidPolygonLayer } from '@deck.gl/layers'
 import { HeatmapLayer } from '@deck.gl/aggregation-layers'
 import { _GlobeView as GlobeView, type MapViewState } from '@deck.gl/core'
 import type { WatchEvent } from '../../types'
@@ -169,7 +169,23 @@ const InteractiveGlobe: React.FC<InteractiveGlobeProps> = ({
       visible: showHeatmap || (viewState.zoom || 0) < 3.5
     })
 
+    // Occluder polygon to provide depth for the globe so backside markers are hidden
+    // We use a nearly transparent color so the base map still shows through, but
+    // it writes to the depth buffer for Deck's own markers.
+    const occluderLayer = new SolidPolygonLayer({
+      id: 'globe-depth-occluder',
+      data: [{ polygon: [[-180, 90], [180, 90], [180, -90], [-180, -90]] }],
+      getPolygon: d => d.polygon,
+      getFillColor: [0, 0, 0, 1], // almost transparent but writes to depth
+      parameters: {
+        depthTest: true,
+        depthWrite: true,
+        colorMask: [false, false, false, false] // don't write color, only depth
+      } as any
+    })
+
     return [
+      occluderLayer,
       showHeatmap || (viewState.zoom || 0) < 3.5 ? heatmapLayer : null,
       (viewState.zoom || 0) >= 1.5 ? scatterGlowLayer : null,
       (viewState.zoom || 0) >= 1.5 ? scatterLayer : null
