@@ -270,12 +270,12 @@ npm run digest:serve # Start the digest API (port 3001)
 
 ### 5.4 Accessibility
 
-- [ ] Verify **color + icon** (never color alone for meaning)
-- [ ] Ensure **keyboard navigation** for all interactive elements
-- [ ] Test **tooltip readability**
-- [ ] Validate **contrast ≥ WCAG AA** on all text
-- [ ] Add **visible focus states**
-- [ ] Add **screen reader support**
+- [x] Verify **color + icon** (never color alone for meaning)
+- [x] Ensure **keyboard navigation** for all interactive elements
+- [x] Test **tooltip readability**
+- [x] Validate **contrast >= WCAG AA** on all text
+- [x] Add **visible focus states**
+- [x] Add **screen reader support**
 
 ### 5.5 Performance Optimization
 

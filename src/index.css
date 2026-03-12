@@ -17,8 +17,8 @@
   /* Text */
   --text-primary: #ffffff;
   --text-secondary: #bbbbbb;
-  --text-muted: #666666;
-  --text-dim: #444444;
+  --text-muted: #888888;
+  --text-dim: #7a7a7a;
 
   /* Signal Colors */
   --signal-red: #ff3b3b;

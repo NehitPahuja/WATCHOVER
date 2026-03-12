@@ -22,9 +22,9 @@ interface KeywordsModuleProps {
 // =============================================
 
 const TrendIcon: React.FC<{ trend?: 'up' | 'down' | 'stable' }> = ({ trend }) => {
-  if (!trend || trend === 'stable') return <span className="wo-kw__trend wo-kw__trend--stable">—</span>
-  if (trend === 'up') return <span className="wo-kw__trend wo-kw__trend--up">↑</span>
-  return <span className="wo-kw__trend wo-kw__trend--down">↓</span>
+  if (!trend || trend === 'stable') return <span className="wo-kw__trend wo-kw__trend--stable" aria-label="Stable trend" title="Stable trend">—</span>
+  if (trend === 'up') return <span className="wo-kw__trend wo-kw__trend--up" aria-label="Trending up" title="Trending up">↑</span>
+  return <span className="wo-kw__trend wo-kw__trend--down" aria-label="Trending down" title="Trending down">↓</span>
 }
 
 // =============================================

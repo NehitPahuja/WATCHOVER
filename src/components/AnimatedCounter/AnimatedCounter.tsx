@@ -77,7 +77,10 @@ const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
   }, [value, duration, flashOnChange])
 
   return (
-    <span className={`wo-animated-counter ${className} ${isFlashing ? 'wo-animated-counter--flash' : ''}`}>
+    <span 
+      className={`wo-animated-counter ${className} ${isFlashing ? 'wo-animated-counter--flash' : ''}`}
+      aria-live={flashOnChange ? "polite" : "off"}
+    >
       {format(displayValue)}
     </span>
   )

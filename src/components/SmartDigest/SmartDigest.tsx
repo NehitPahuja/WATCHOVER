@@ -93,13 +93,13 @@ const SmartDigest: React.FC = () => {
     return (
       <div className="wo-smart-digest">
         <div className="wo-smart-digest__header">
-          <div className="wo-smart-digest__icon">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M12 2L2 7l10 5 10-5-10-5z" />
-              <path d="M2 17l10 5 10-5" />
-              <path d="M2 12l10 5 10-5" />
-            </svg>
-          </div>
+        <div className="wo-smart-digest__icon">
+          <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5z" />
+            <path d="M2 17l10 5 10-5" />
+            <path d="M2 12l10 5 10-5" />
+          </svg>
+        </div>
           <span className="wo-smart-digest__title">Smart Digest</span>
           <span className="wo-smart-digest__loading-dot" />
         </div>
@@ -117,13 +117,13 @@ const SmartDigest: React.FC = () => {
     return (
       <div className="wo-smart-digest">
         <div className="wo-smart-digest__header">
-          <div className="wo-smart-digest__icon">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M12 2L2 7l10 5 10-5-10-5z" />
-              <path d="M2 17l10 5 10-5" />
-              <path d="M2 12l10 5 10-5" />
-            </svg>
-          </div>
+        <div className="wo-smart-digest__icon">
+          <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5z" />
+            <path d="M2 17l10 5 10-5" />
+            <path d="M2 12l10 5 10-5" />
+          </svg>
+        </div>
           <span className="wo-smart-digest__title">Smart Digest</span>
         </div>
         <p className="wo-smart-digest__offline">
@@ -175,7 +175,7 @@ const SmartDigest: React.FC = () => {
         <span className="wo-smart-digest__time mono">{timeAgo}</span>
 
         <div className={`wo-smart-digest__chevron ${expanded ? 'wo-smart-digest__chevron--up' : ''}`}>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="6 9 12 15 18 9" />
           </svg>
         </div>
@@ -190,14 +190,14 @@ const SmartDigest: React.FC = () => {
           {/* Meta bar */}
           <div className="wo-smart-digest__meta">
             <span className="wo-smart-digest__meta-item">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="12" cy="12" r="10" />
                 <path d="M12 6v6l4 2" />
               </svg>
               {generatedDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </span>
             <span className="wo-smart-digest__meta-item">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
                 <line x1="4" y1="22" x2="4" y2="15" />
               </svg>
@@ -250,7 +250,7 @@ const SmartDigest: React.FC = () => {
               onClick={(e) => { e.stopPropagation(); handleRegenerate() }}
               disabled={regenerating}
             >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={regenerating ? 'spinning' : ''}>
+              <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={regenerating ? 'spinning' : ''}>
                 <path d="M23 4v6h-6" />
                 <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
               </svg>

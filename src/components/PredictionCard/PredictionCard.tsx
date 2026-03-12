@@ -77,9 +77,9 @@ const Sparkline: React.FC<{ data: number[]; trend: 'up' | 'down' | 'stable'; wid
 // =============================================
 
 const TrendArrow: React.FC<{ trend: 'up' | 'down' | 'stable' }> = ({ trend }) => {
-  if (trend === 'up') return <span className="wo-pred__trend wo-pred__trend--up">↗</span>
-  if (trend === 'down') return <span className="wo-pred__trend wo-pred__trend--down">↘</span>
-  return <span className="wo-pred__trend wo-pred__trend--stable">→</span>
+  if (trend === 'up') return <span className="wo-pred__trend wo-pred__trend--up" aria-label="Trending up" title="Trending up">↗</span>
+  if (trend === 'down') return <span className="wo-pred__trend wo-pred__trend--down" aria-label="Trending down" title="Trending down">↘</span>
+  return <span className="wo-pred__trend wo-pred__trend--stable" aria-label="Stable trend" title="Stable trend">→</span>
 }
 
 // =============================================
