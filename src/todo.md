@@ -261,12 +261,12 @@ npm run digest:serve # Start the digest API (port 3001)
 
 ### 5.3 Micro-Interactions & Polish
 
-- [ ] Implement **live pulse animation** on LIVE indicator
-- [ ] Add **counter increment animations** (number tick-up effect)
-- [ ] Add **marker glow effects** on globe
-- [ ] Ensure **chart smooth transitions** on data updates
-- [ ] Add **subtle hover highlights** on all interactive elements
-- [ ] Verify: No bouncy animations — linear, subtle, professional motion only
+- [x] Implement **live pulse animation** on LIVE indicator
+- [x] Add **counter increment animations** (number tick-up effect)
+- [x] Add **marker glow effects** on globe
+- [x] Ensure **chart smooth transitions** on data updates
+- [x] Add **subtle hover highlights** on all interactive elements
+- [x] Verify: No bouncy animations — linear, subtle, professional motion only
 
 ### 5.4 Accessibility
 

@@ -126,6 +126,31 @@ const InteractiveGlobe: React.FC<InteractiveGlobeProps> = ({
       } as any
     })
 
+    const scatterGlowLayer = new ScatterplotLayer<WatchEvent>({
+      id: 'event-scatter-glow',
+      data: events.filter(e => e.lat != null && e.lng != null),
+      getPosition: d => [d.lng!, d.lat!],
+      getFillColor: d => {
+        if (d.sentiment === 'escalation') return [255, 30, 30, 60]
+        if (d.sentiment === 'de-escalation') return [0, 255, 133, 60]
+        return [255, 200, 87, 60]
+      },
+      getRadius: d => {
+        const baseRadius = 80000; // 80km base pulse for glow
+        const zoomFactor = Math.pow(1.5, -(viewState.zoom || 0));
+        return baseRadius * zoomFactor * (d.confidence / 50);
+      },
+      radiusUnits: 'meters',
+      radiusMinPixels: 6,
+      radiusMaxPixels: 40,
+      stroked: false,
+      filled: true,
+      pickable: false,
+      parameters: {
+        depthTest: true
+      } as any
+    })
+
     // 2. Optional Heatmap Layer for density
     const heatmapLayer = new HeatmapLayer<WatchEvent>({
       id: 'event-heatmap',
@@ -146,6 +171,7 @@ const InteractiveGlobe: React.FC<InteractiveGlobeProps> = ({
 
     return [
       showHeatmap || (viewState.zoom || 0) < 3.5 ? heatmapLayer : null,
+      (viewState.zoom || 0) >= 1.5 ? scatterGlowLayer : null,
       (viewState.zoom || 0) >= 1.5 ? scatterLayer : null
     ].filter(Boolean)
   }, [events, onEventClick, showHeatmap, viewState.zoom])

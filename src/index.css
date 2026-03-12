@@ -255,3 +255,22 @@ a:hover {
   min-height: 100vh;
   gap: var(--spacing-md);
 }
+
+/* ---- Global Interactive Hover Highlights ---- */
+button,
+a,
+[role="button"],
+.wo-card,
+.wo-pred,
+.wo-feed-item {
+  transition: filter var(--transition-fast), transform var(--transition-base);
+}
+
+button:hover,
+a:hover,
+[role="button"]:hover,
+.wo-card:hover,
+.wo-pred:hover,
+.wo-feed-item:hover {
+  filter: brightness(1.15);
+}
