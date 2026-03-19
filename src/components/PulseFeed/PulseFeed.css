@@ -199,6 +199,14 @@
   gap: var(--spacing-sm);
 }
 
+/* Virtualized list mode — needs a fixed height for windowing */
+.wo-pulse-feed__list--virtual {
+  flex: 1;
+  min-height: 400px;
+  max-height: calc(100vh - 320px);
+  padding: var(--spacing-sm);
+}
+
 /* ---- Empty State ---- */
 .wo-pulse-feed__empty {
   display: flex;

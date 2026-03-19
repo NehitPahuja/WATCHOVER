@@ -45,5 +45,40 @@ export default defineConfig({
       },
     },
   },
+
+  // =============================================
+  // Performance Optimizations (Phase 5.5)
+  // =============================================
+  build: {
+    target: 'es2020', // Modern browsers only — smaller, faster code
+    sourcemap: false, // Disable source maps in production
+    rollupOptions: {
+      output: {
+        // Manual chunk splitting: separate large libraries into their own
+        // cacheable chunks so the main bundle stays lean
+        manualChunks: {
+          // React core
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          // Map/Globe rendering (heaviest deps)
+          'vendor-map': [
+            'maplibre-gl',
+            'react-map-gl',
+            '@deck.gl/core',
+            '@deck.gl/react',
+            '@deck.gl/layers',
+            '@deck.gl/aggregation-layers',
+          ],
+          // Data visualization
+          'vendor-d3': ['d3'],
+          // Auth
+          'vendor-clerk': ['@clerk/clerk-react', '@clerk/themes'],
+          // Data fetching
+          'vendor-query': ['@tanstack/react-query'],
+        },
+      },
+    },
+    // Increase the chunk size warning limit (map deps are inherently large)
+    chunkSizeWarningLimit: 800,
+  },
 })
 

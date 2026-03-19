@@ -1,8 +1,10 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import type { WatchEvent } from '../../types'
 import { EventCard } from '../EventCard'
 import { EventDetailModal } from '../EventDetailModal'
 import { SmartDigest } from '../SmartDigest'
+import { VirtualList } from '../VirtualList'
+import { useDebounce } from '../../hooks/useDebounce'
 import './PulseFeed.css'
 
 type FilterTab = 'all' | 'high' | 'medium' | '24h' | 'escalation' | 'de-escalation'
@@ -20,10 +22,19 @@ const FILTER_TABS: { key: FilterTab; label: string; variant?: string }[] = [
   { key: 'de-escalation', label: 'De-escalation', variant: 'de-esc' },
 ]
 
+/** Height of each EventCard in pixels (used for virtual list windowing) */
+const EVENT_CARD_HEIGHT = 110
+
+/** Threshold for using virtualized vs flat list */
+const VIRTUALIZATION_THRESHOLD = 20
+
 const PulseFeed: React.FC<PulseFeedProps> = ({ events }) => {
   const [activeFilter, setActiveFilter] = useState<FilterTab>('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedEvent, setSelectedEvent] = useState<WatchEvent | null>(null)
+
+  // Debounce search input to avoid re-filtering on every keystroke
+  const debouncedSearch = useDebounce(searchQuery, 300)
 
   const filteredEvents = useMemo(() => {
     let filtered = events
@@ -47,9 +58,9 @@ const PulseFeed: React.FC<PulseFeedProps> = ({ events }) => {
         break
     }
 
-    // Apply search
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase()
+    // Apply debounced search (doesn't fire until typing pauses for 300ms)
+    if (debouncedSearch.trim()) {
+      const q = debouncedSearch.toLowerCase()
       filtered = filtered.filter(e =>
         e.title.toLowerCase().includes(q) ||
         e.region.toLowerCase().includes(q) ||
@@ -59,7 +70,23 @@ const PulseFeed: React.FC<PulseFeedProps> = ({ events }) => {
     }
 
     return filtered
-  }, [events, activeFilter, searchQuery])
+  }, [events, activeFilter, debouncedSearch])
+
+  // Memoize the event card renderer for VirtualList
+  const renderEvent = useCallback(
+    (event: WatchEvent) => (
+      <EventCard
+        event={event}
+        onViewDetail={(e) => setSelectedEvent(e)}
+      />
+    ),
+    []
+  )
+
+  const getEventKey = useCallback((event: WatchEvent) => event.id, [])
+
+  // Use virtualized list for large datasets, flat list for small ones
+  const shouldVirtualize = filteredEvents.length > VIRTUALIZATION_THRESHOLD
 
   return (
     <div className="wo-pulse-feed">
@@ -82,7 +109,7 @@ const PulseFeed: React.FC<PulseFeedProps> = ({ events }) => {
         </div>
       </div>
 
-      {/* Search */}
+      {/* Search (onChange fires immediately for UI, but filtering is debounced) */}
       <div className="wo-pulse-feed__search">
         <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <circle cx="11" cy="11" r="8" />
@@ -109,20 +136,33 @@ const PulseFeed: React.FC<PulseFeedProps> = ({ events }) => {
       {/* Event Count */}
       <div className="wo-pulse-feed__count">
         <span className="mono">{filteredEvents.length}</span> events
-        {searchQuery && <span> matching "{searchQuery}"</span>}
+        {debouncedSearch && <span> matching "{debouncedSearch}"</span>}
       </div>
 
-      {/* Event List */}
-      <div className="wo-pulse-feed__list">
-        {filteredEvents.length > 0 ? (
-          filteredEvents.map(event => (
-            <EventCard
-              key={event.id}
-              event={event}
-              onViewDetail={(e) => setSelectedEvent(e)}
-            />
-          ))
+      {/* Event List — Virtualized for large datasets */}
+      {filteredEvents.length > 0 ? (
+        shouldVirtualize ? (
+          <VirtualList
+            items={filteredEvents}
+            itemHeight={EVENT_CARD_HEIGHT}
+            overscan={5}
+            renderItem={renderEvent}
+            getKey={getEventKey}
+            className="wo-pulse-feed__list wo-pulse-feed__list--virtual"
+          />
         ) : (
+          <div className="wo-pulse-feed__list">
+            {filteredEvents.map(event => (
+              <EventCard
+                key={event.id}
+                event={event}
+                onViewDetail={(e) => setSelectedEvent(e)}
+              />
+            ))}
+          </div>
+        )
+      ) : (
+        <div className="wo-pulse-feed__list">
           <div className="wo-pulse-feed__empty">
             <span className="wo-pulse-feed__empty-icon">◇</span>
             <p>No events match your filters</p>
@@ -133,8 +173,8 @@ const PulseFeed: React.FC<PulseFeedProps> = ({ events }) => {
               Reset filters
             </button>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Event Detail Modal */}
       <EventDetailModal

@@ -279,11 +279,11 @@ npm run digest:serve # Start the digest API (port 3001)
 
 ### 5.5 Performance Optimization
 
-- [ ] Ensure **globe renders at 60fps**
-- [ ] **Lazy load** right panel data
-- [ ] **Virtualize** feed list (already in Phase 1, verify)
-- [ ] **Debounce** search input
-- [ ] Verify **page load < 2.5s**, **API P95 < 300ms**
+- [x] Ensure **globe renders at 60fps**
+- [x] **Lazy load** right panel data
+- [x] **Virtualize** feed list (already in Phase 1, verify)
+- [x] **Debounce** search input
+- [x] Verify **page load < 2.5s**, **API P95 < 300ms**
 
 ### 5.6 Testing
 

@@ -1,13 +1,15 @@
 import { Routes, Route, useNavigate } from 'react-router-dom'
-import { useMemo } from 'react'
-import { DashboardLayout, Navbar, NewsTicker, PulseFeed, InteractiveGlobe, TensionChart, MOCK_TENSION_DATA, PredictionCard, MarketsModule, KeywordsModule } from './components'
+import React, { useMemo, lazy, Suspense } from 'react'
+import { DashboardLayout, Navbar, NewsTicker, PulseFeed, InteractiveGlobe, TensionChart, MOCK_TENSION_DATA, PredictionCard, MarketsModule, KeywordsModule, LazySection } from './components'
 import type { TickerItem, Prediction, MarketEntry, KeywordEntry } from './components'
 import type { WatchEvent } from './types'
 import { useRealtimeDashboard } from './hooks'
 import { useEvents } from './hooks/useQueries'
-import { PredictionsPage } from './pages/PredictionsPage'
-import { AnalyticsPage } from './pages/AnalyticsPage'
 import './App.css'
+
+// Lazy-loaded route pages — split into separate chunks for faster initial load
+const PredictionsPage = lazy(() => import('./pages/PredictionsPage/PredictionsPage'))
+const AnalyticsPage = lazy(() => import('./pages/AnalyticsPage/AnalyticsPage'))
 
 // =============================================
 // Mock Data — will be replaced by API calls
@@ -385,22 +387,42 @@ function getCountryFlag(code: string | null): string {
 }
 
 
+// Suspense fallback for lazy-loaded pages
+const PageLoader = () => (
+  <div style={{
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100vh',
+    background: 'var(--bg-base)',
+    color: 'var(--text-muted)',
+    fontFamily: 'var(--font-mono)',
+    fontSize: '12px',
+    letterSpacing: '0.1em',
+  }}>
+    LOADING MODULE...
+  </div>
+)
+
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Dashboard />} />
-      <Route path="/predictions" element={<PredictionsPage />} />
-      <Route path="/predictions/:id" element={<PredictionsPage />} />
-      <Route path="/analytics" element={<AnalyticsPage />} />
-    </Routes>
+    <Suspense fallback={<PageLoader />}>
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/predictions" element={<PredictionsPage />} />
+        <Route path="/predictions/:id" element={<PredictionsPage />} />
+        <Route path="/analytics" element={<AnalyticsPage />} />
+      </Routes>
+    </Suspense>
   )
 }
 
 // =============================================
-// Center Panel — Globe Placeholder
+// Center Panel — Globe + Tension Chart (memoized)
 // =============================================
 
-function CenterPanel({ events, aircraft }: { events: WatchEvent[]; aircraft: number }) {
+
+const CenterPanel = React.memo(function CenterPanel({ events, aircraft }: { events: WatchEvent[]; aircraft: number }) {
   return (
     <div className="panel-center">
       <div className="globe-placeholder">
@@ -414,7 +436,7 @@ function CenterPanel({ events, aircraft }: { events: WatchEvent[]; aircraft: num
       />
     </div>
   )
-}
+})
 
 // =============================================
 // Right Panel — Predictions, Markets, Keywords
@@ -425,26 +447,32 @@ function RightPanel() {
 
   return (
     <div className="panel-right">
-      {/* Predictions */}
-      <section className="panel-section">
-        <h3 className="panel-section__title">Top Predictions</h3>
-        {MOCK_PREDICTIONS.map((pred) => (
-          <PredictionCard
-            key={pred.id}
-            prediction={pred}
-            onClick={(p) => navigate(`/predictions/${p.id}`)}
-          />
-        ))}
-      </section>
+      {/* Predictions — lazy loaded */}
+      <LazySection placeholderHeight={280} rootMargin="400px">
+        <section className="panel-section">
+          <h3 className="panel-section__title">Top Predictions</h3>
+          {MOCK_PREDICTIONS.map((pred) => (
+            <PredictionCard
+              key={pred.id}
+              prediction={pred}
+              onClick={(p) => navigate(`/predictions/${p.id}`)}
+            />
+          ))}
+        </section>
+      </LazySection>
 
-      {/* Markets */}
-      <MarketsModule markets={MOCK_MARKETS} />
+      {/* Markets — lazy loaded */}
+      <LazySection placeholderHeight={180} rootMargin="300px">
+        <MarketsModule markets={MOCK_MARKETS} />
+      </LazySection>
 
-      {/* Keywords */}
-      <KeywordsModule
-        keywords={MOCK_KEYWORDS}
-        onKeywordClick={(kw) => console.log('Filter by keyword:', kw)}
-      />
+      {/* Keywords — lazy loaded */}
+      <LazySection placeholderHeight={200} rootMargin="300px">
+        <KeywordsModule
+          keywords={MOCK_KEYWORDS}
+          onKeywordClick={(kw) => console.log('Filter by keyword:', kw)}
+        />
+      </LazySection>
     </div>
   )
 }

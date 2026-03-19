@@ -23,5 +23,7 @@ export { KeywordsModule } from './KeywordsModule'
 export type { KeywordEntry } from './KeywordsModule'
 export { AnimatedCounter } from './AnimatedCounter'
 export { SmartDigest } from './SmartDigest'
+export { VirtualList } from './VirtualList'
+export { LazySection } from './LazySection'
 
 

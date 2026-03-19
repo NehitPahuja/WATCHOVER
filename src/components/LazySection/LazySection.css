@@ -1,0 +1,11 @@
+/* LazySection — Fade-in transition when content becomes visible */
+.wo-lazy-section {
+  width: 100%;
+}
+
+.wo-lazy-section__placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.3;
+}

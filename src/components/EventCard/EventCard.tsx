@@ -1,3 +1,4 @@
+import React from 'react'
 import type { WatchEvent } from '../../types'
 import { Badge } from '../Badge'
 import './EventCard.css'
@@ -7,7 +8,7 @@ interface EventCardProps {
   onViewDetail?: (event: WatchEvent) => void
 }
 
-const EventCard: React.FC<EventCardProps> = ({ event, onViewDetail }) => {
+const EventCard: React.FC<EventCardProps> = React.memo(({ event, onViewDetail }) => {
 
   const variant = event.sentiment === 'escalation'
     ? 'escalation'
@@ -53,6 +54,8 @@ const EventCard: React.FC<EventCardProps> = ({ event, onViewDetail }) => {
       </div>
     </article>
   )
-}
+})
+
+EventCard.displayName = 'EventCard'
 
 export default EventCard
