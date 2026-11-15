@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { withAuthRead, withAuthWrite, type SecuredHandler } from '../../../server/lib/middleware'
+import { withAuthWrite, type SecuredHandler } from '../../../server/lib/middleware'
 import { createDb } from '../../../server/db'
 import { markNotificationAsRead } from '../../../server/services/notifications'
 

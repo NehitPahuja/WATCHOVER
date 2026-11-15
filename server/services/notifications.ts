@@ -1,6 +1,6 @@
 import { eq, and, desc } from 'drizzle-orm'
 import { type Database } from '../db'
-import { notifications, notificationPreferences, type notificationTypeEnum } from '../db/schema'
+import { notifications, notificationPreferences } from '../db/schema'
 import type { InferSelectModel, InferInsertModel } from 'drizzle-orm'
 
 export type Notification = InferSelectModel<typeof notifications>

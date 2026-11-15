@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import Map from 'react-map-gl/maplibre'
+import maplibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url'
 import DeckGL from '@deck.gl/react'
 import { ScatterplotLayer } from '@deck.gl/layers'
 import { HeatmapLayer } from '@deck.gl/aggregation-layers'
@@ -16,6 +17,14 @@ import './InteractiveGlobe.css'
 
 // High-fidelity dark tactical map style (using Carto Dark Matter)
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json'
+
+// MapLibre v6 looks for its worker next to its own module file, which no longer
+// exists once Vite bundles it. Point it at the worker Vite emits as an asset,
+// and keep the library in its own lazily loaded chunk.
+const MAPLIBRE = import('maplibre-gl').then((maplibre) => {
+  maplibre.setWorkerUrl(maplibreWorkerUrl)
+  return maplibre
+})
 
 const INITIAL_VIEW_STATE: MapViewState = {
   longitude: 25,
@@ -141,6 +150,7 @@ const InteractiveGlobe: React.FC<InteractiveGlobeProps> = ({
       }),
       parameters: {
         depthTest: true
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- luma.gl v9 types omit depthTest; value kept as-is
       } as any,
       updateTriggers: {
         getFillColor: [viewState.longitude, viewState.latitude],
@@ -173,6 +183,7 @@ const InteractiveGlobe: React.FC<InteractiveGlobeProps> = ({
       pickable: false,
       parameters: {
         depthTest: true
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- luma.gl v9 types omit depthTest; value kept as-is
       } as any,
       updateTriggers: {
         getFillColor: [viewState.longitude, viewState.latitude],
@@ -222,9 +233,9 @@ const InteractiveGlobe: React.FC<InteractiveGlobeProps> = ({
         getCursor={({ isDragging }) => (isDragging ? 'grabbing' : hoverInfo.object ? 'pointer' : 'grab')}
       >
         <Map
+          mapLib={MAPLIBRE}
           mapStyle={MAP_STYLE}
           reuseMaps
-          // @ts-ignore - MapLibre globe property
           projection="globe"
         >
           {/* Surface atmosphere glow wrapper */}

@@ -20,7 +20,6 @@ import {
   createEnvelope,
   parseEnvelope,
   type WsEnvelope,
-  type WsMessageType,
   type SubscribePayload,
   type AuthPayload,
 } from './protocol'

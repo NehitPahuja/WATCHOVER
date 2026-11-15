@@ -38,7 +38,7 @@ const SmartDigest: React.FC = () => {
 
       const data: DigestData = await res.json()
       setDigest(data)
-    } catch (err) {
+    } catch {
       console.warn('[SmartDigest] API unavailable, using local fallback')
       setError('Digest API offline')
 

@@ -37,7 +37,9 @@ try {
     }
     if (!process.env[key]) process.env[key] = value
   }
-} catch {}
+} catch {
+  // No .env file: fall back to the real environment.
+}
 
 // =============================================
 // Types
@@ -138,7 +140,7 @@ function createLocalFallbackProvider(): AIProvider {
   return {
     name: 'Local Analysis',
     isAvailable: () => true,
-    generate: async (_prompt: string): Promise<string> => {
+    generate: async (): Promise<string> => {
       // This is a marker — we'll handle local generation
       // directly in the orchestrator where we have access to the raw event data.
       return '__LOCAL_FALLBACK__'

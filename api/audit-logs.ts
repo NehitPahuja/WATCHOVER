@@ -15,7 +15,6 @@
  *   - offset: Pagination offset (default: 0)
  */
 
-import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { withSecurity, type SecuredHandler } from '../server/lib/middleware'
 import { queryAuditLogs, type AuditQueryParams } from '../server/lib/audit'
 import { isValidUuid, sanitizeNumber, sanitizeString } from '../server/lib/sanitize'
