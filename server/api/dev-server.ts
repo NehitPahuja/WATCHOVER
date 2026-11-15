@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- local-only shim that patches untyped Vercel req/res helpers onto Node http objects */
 import { createServer, IncomingMessage, ServerResponse } from 'http'
 import { parse } from 'url'
 import { resolve } from 'path'
@@ -19,7 +20,9 @@ try {
     }
     if (!process.env[key]) process.env[key] = value
   }
-} catch {}
+} catch {
+  // No .env file: fall back to the real environment.
+}
 
 const routes: Record<string, () => Promise<any>> = {
   '/api/events': () => import('../../api/events/index.js'),

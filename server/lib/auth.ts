@@ -55,13 +55,21 @@ export function hasPermission(role: UserRole, permission: Permission): boolean {
  *   if (!hasPermission(session.role, 'predictions:vote'))
  *     return new Response('Forbidden', { status: 403 })
  */
-export async function verifyAuth(request: any): Promise<AuthSession | null> {
-  const getHeader = (name: string) => 
-    typeof request.headers?.get === 'function' 
-      ? request.headers.get(name) || request.headers.get(name.toLowerCase()) 
-      : request.headers?.[name.toLowerCase()]
+/** Anything with headers: a Fetch Request or a Node/Vercel request. */
+type RequestWithHeaders = {
+  headers?: Headers | Record<string, string | string[] | undefined>
+}
 
-  const authHeader = getHeader('Authorization') as string | undefined
+export async function verifyAuth(request: RequestWithHeaders): Promise<AuthSession | null> {
+  const getHeader = (name: string): string | undefined => {
+    const headers = request.headers
+    if (!headers) return undefined
+    if (headers instanceof Headers) return headers.get(name) ?? undefined
+    const value = headers[name.toLowerCase()]
+    return Array.isArray(value) ? value[0] : value
+  }
+
+  const authHeader = getHeader('Authorization')
   if (!authHeader?.startsWith('Bearer ')) return null
 
   const token = authHeader.slice(7)

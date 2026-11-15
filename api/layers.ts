@@ -7,7 +7,6 @@
  * Security: Public read with rate limiting.
  */
 
-import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { withSecurity, type SecuredHandler } from '../server/lib/middleware'
 
 const handler: SecuredHandler = async (req, res) => {

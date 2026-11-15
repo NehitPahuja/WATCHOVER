@@ -11,7 +11,6 @@
  * Security: Authenticated write with rate limiting, RBAC, sanitization, and audit logging.
  */
 
-import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { withSecurity, type SecuredHandler } from '../../../server/lib/middleware'
 import { createDb } from '../../../server/db'
 import {

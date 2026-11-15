@@ -28,7 +28,9 @@ try {
     }
     if (!process.env[key]) process.env[key] = value
   }
-} catch {}
+} catch {
+  // No .env file: fall back to the real environment.
+}
 
 import { generateSmartDigest } from '../services/ai-digest'
 

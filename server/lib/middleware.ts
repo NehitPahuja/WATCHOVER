@@ -25,7 +25,7 @@ import {
   createWsRateLimiter,
   checkRateLimit,
 } from './ratelimit'
-import { sanitizeObject, sanitizeString } from './sanitize'
+import { sanitizeObject } from './sanitize'
 import { logAuditEvent, getClientIp, type AuditAction, type AuditEntityType } from './audit'
 import { createDb } from '../db'
 

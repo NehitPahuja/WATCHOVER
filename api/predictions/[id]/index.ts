@@ -6,7 +6,6 @@
  * Security: Public read with rate limiting and UUID validation.
  */
 
-import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { withSecurity, type SecuredHandler } from '../../../server/lib/middleware'
 import { createDb } from '../../../server/db'
 import { getPredictionDetail } from '../../../server/services/predictions'

@@ -20,6 +20,7 @@ import {
   type EventUpdatePayload,
   type PredictionUpdatePayload,
   type CountersUpdatePayload,
+  type WsMessageType,
 } from './protocol'
 
 export class RelayPublisher {
@@ -107,11 +108,11 @@ export class RelayPublisher {
     this.isConnected = false
   }
 
-  private send(type: string, payload: unknown, channel: string) {
+  private send(type: WsMessageType, payload: unknown, channel: string) {
     if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
       console.warn('[PUBLISHER] Not connected, message dropped:', type)
       return
     }
-    this.ws.send(JSON.stringify(createEnvelope(type as any, payload, channel)))
+    this.ws.send(JSON.stringify(createEnvelope(type, payload, channel)))
   }
 }
